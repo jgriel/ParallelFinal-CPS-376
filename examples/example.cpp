@@ -8,6 +8,20 @@ int add(int i, int j) {
     return i + j;
 }
 
+std::vector<std::vector<int>> multiplyVectorMatrix(std::vector<int> arr, std::vector<std::vector<int>> mat) {
+    std::vector<std::vector<int>> mat_b = {};
+    for (size_t i = 0; i < mat.size(); i++) {
+        if (arr.size() != mat[i].size()) {
+            throw std::invalid_argument("Length of all rows in the matrix must == legnth of the vector!");
+        }
+
+        mat_b.push_back({});
+        for (size_t j = 0; j < mat[i].size(); j++) {
+            mat_b[i].push_back(arr[j] * mat[i][j]);
+        }
+    }
+    return mat_b;
+}
 
 std::vector<int> addVectorVector(std::vector<int> arr_x, std::vector<int> arr_y) {
     if (arr_x.size() != arr_y.size()){
@@ -72,6 +86,7 @@ int multiplyInt(int i, int j) {
 PYBIND11_MODULE(example, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
     m.def("add", &add, "A function that adds two numbers");
+    m.def("multiplyVectorMatrix", &multiplyVectorMatrix, "A function that does vector-matrix multiplication");
     m.def("addVectorVector", &addVectorVector, "A function that adds together values at equivalent indices between two vectors");
     m.def("subtractVectorVector", &subtractVectorVector, "A function that subtracts two values at equivalent indices between two vectors");
     m.def("multiplyVectorVector", &multiplyVectorVector, "A function that multiplies two values at equivalent indices between two vectors");
