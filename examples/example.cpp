@@ -13,6 +13,7 @@ std::vector<int> scalarVector(int x, std::vector<int> arr) {
         arr[i] *= x;
     }
     return arr;
+}
 
 int subtractInt(int i, int j) {
     return i - j;
