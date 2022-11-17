@@ -15,3 +15,9 @@ print(example.scalarMatrix(2, [[1,2,3], [4,5,6]]))
 print(example.scalarVector(2, [1,2,3,4,5]))
 print(example.subtract(79, 10))
 print(example.multiply(12, 5))
+
+arr_a = example.array([1, 2, 3])
+print(arr_a)
+
+arr_b = example.array([[1], [2, 4], [1, 1, 2]])
+print(arr_b)

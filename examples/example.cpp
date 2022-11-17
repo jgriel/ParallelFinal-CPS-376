@@ -4,6 +4,29 @@
 
 // To compile c++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) example.cpp -o example$(python3-config --extension-suffix)
 
+
+// 1d array create our array type (like numpy.array([1, 2, 3]))
+std::vector<int> array(std::vector<int> arr_a) {
+    std::vector<int> arr_b;
+    for (size_t i = 0; i < arr_a.size(); i++) {
+        arr_b.push_back(arr_a[i]);
+    }
+    return arr_b;
+}
+
+// 2d array create our array type (like numpy.array([1, 2, 3]))
+std::vector<std::vector<int>> array(std::vector<std::vector<int>> arr_a) {
+    std::vector<std::vector<int>> arr_b;
+    for (size_t i = 0; i < arr_a.size(); i++) {
+        arr_b.push_back({});
+        for (size_t j = 0; j < arr_a.size(); j++) {
+           arr_b[i].push_back(arr_a[i][j]);
+        }
+        
+    }
+    return arr_b;
+}
+
 int add(int i, int j) {
     return i + j;
 }
@@ -85,6 +108,8 @@ int multiplyInt(int i, int j) {
 
 PYBIND11_MODULE(example, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
+    m.def("array", &array<std::vector<int>> arr_a>, "A function that creates a 1d array within our library");
+    m.def("array", &array<std::vector<std::vector<int>> arr_a>, "A function that creates a 2d array within our library");    
     m.def("add", &add, "A function that adds two numbers");
     m.def("multiplyVectorMatrix", &multiplyVectorMatrix, "A function that does vector-matrix multiplication");
     m.def("addVectorVector", &addVectorVector, "A function that adds together values at equivalent indices between two vectors");
