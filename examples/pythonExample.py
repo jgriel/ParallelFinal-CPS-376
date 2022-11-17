@@ -15,6 +15,7 @@ print(example.scalarMatrix(2, [[1,2,3], [4,5,6]]))
 
 print(example.scalarVector(2, [1,2,3,4,5]))
 
+print(example.multiplyMatrixMatrix( [[1,2,3], [4,5,6]], [[6,5], [4,3], [2,1]] ))
 print(example.multiplyMatrixMatrix( [[6,5], [4,3], [2,1]], [[1,2,3], [4,5,6]] ))
 
 print

@@ -26,6 +26,9 @@ std::vector<std::vector<int>> multiplyMatrixMatrix(std::vector<std::vector<int>>
         for (size_t m2_col = 0; m2_col < m2[0].size(); m2_col++) {
             int acc = 0;
             for (size_t idx = 0; idx < m1[m1_row].size(); idx++) {
+                if (m1.size() != m2[idx].size()) {
+                    throw std::invalid_argument("Length of each column in matrix #1 must equal length of each row in matrix #2!");
+                }
                 acc += m1[m1_row][idx] * m2[idx][m2_col];
             }
             tmp.push_back(acc);
