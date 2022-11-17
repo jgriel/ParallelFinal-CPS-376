@@ -18,10 +18,10 @@ int multiplyInt(int i, int j) {
 
 std::vector<std::vector<int>> multiplyMatrixMatrix(std::vector<std::vector<int>> m1, std::vector<std::vector<int>> m2) {
     std::vector<std::vector<int>> m3 = {};
-    if (m1[0].size() != m2.size()) {
-        throw std::invalid_argument("Length of rows in matrix #1 must equal length of columns in matrix #2!");
-    }
     for (size_t m1_row = 0; m1_row < m1.size(); m1_row++) {
+        if (m1[m1_row].size() != m2.size()) {
+            throw std::invalid_argument("Length of each row in matrix #1 must equal length of each column in matrix #2!");
+        }
         std::vector<int> tmp = {};
         for (size_t m2_col = 0; m2_col < m2[0].size(); m2_col++) {
             int acc = 0;
