@@ -1,9 +1,31 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <vector>
+#include <iostream>
+#include <string>
 
 // To compile c++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) example.cpp -o example$(python3-config --extension-suffix)
 
+// need to make our own struct that acts as an array in order to create the overload 
+
+template <typename T>
+class myArray {
+    public:
+        myArray(T arr_b) {
+            arr = arr_b;
+        }
+        std::string toString() {
+            std::string msg = "[";
+            for (size_t i = 0; i < arr.size(); i++) {
+                msg += arr[i] + ", ";
+            }
+            msg += "]";
+            return msg;
+        }
+    
+    private:
+        T arr;
+};
 
 // 1d array create our array type (like numpy.array([1, 2, 3]))
 std::vector<int> array(std::vector<int> arr_a) {
@@ -14,22 +36,18 @@ std::vector<int> array(std::vector<int> arr_a) {
     return arr_b;
 }
 
-// 2d array create our array type (like numpy.array([1, 2, 3]))
-std::vector<std::vector<int>> array(std::vector<std::vector<int>> arr_a) {
-    std::vector<std::vector<int>> arr_b;
-    for (size_t i = 0; i < arr_a.size(); i++) {
-        arr_b.push_back({});
-        for (size_t j = 0; j < arr_a.size(); j++) {
-           arr_b[i].push_back(arr_a[i][j]);
-        }
+// // 2d array create our array type (like numpy.array([1, 2, 3]))
+// std::vector<std::vector<int>> array(std::vector<std::vector<int>> arr_a) {
+//     std::vector<std::vector<int>> arr_b;
+//     for (size_t i = 0; i < arr_a.size(); i++) {
+//         arr_b.push_back({});
+//         for (size_t j = 0; j < arr_a.size(); j++) {
+//            arr_b[i].push_back(arr_a[i][j]);
+//         }
         
-    }
-    return arr_b;
-}
-
-int add(int i, int j) {
-    return i + j;
-}
+//     }
+//     return arr_b;
+// }
 
 std::vector<std::vector<int>> multiplyVectorMatrix(std::vector<int> arr, std::vector<std::vector<int>> mat) {
     std::vector<std::vector<int>> mat_b = {};
@@ -108,9 +126,12 @@ int multiplyInt(int i, int j) {
 
 PYBIND11_MODULE(example, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
-    m.def("array", &array<std::vector<int>> arr_a>, "A function that creates a 1d array within our library");
-    m.def("array", &array<std::vector<std::vector<int>> arr_a>, "A function that creates a 2d array within our library");    
-    m.def("add", &add, "A function that adds two numbers");
+
+    pybind11::class_<myArray<std::vector<int>>>(m, "myArray")
+        .def(pybind11::init<std::vector<int>>())
+        .def("toString", &myArray<std::vector<int>>::toString);
+    m.def("array", &array, "A function that creates a 1d array within our library");
+    // m.def("array", &array<std::vector<std::vector<int>> arr_a>, "A function that creates a 2d array within our library");    
     m.def("multiplyVectorMatrix", &multiplyVectorMatrix, "A function that does vector-matrix multiplication");
     m.def("addVectorVector", &addVectorVector, "A function that adds together values at equivalent indices between two vectors");
     m.def("subtractVectorVector", &subtractVectorVector, "A function that subtracts two values at equivalent indices between two vectors");
