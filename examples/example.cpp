@@ -14,40 +14,38 @@ class myArray {
         myArray(T arr_b) {
             arr = arr_b;
         }
+
         std::string toString() {
-            std::string msg = "[";
-            for (size_t i = 0; i < arr.size(); i++) {
-                msg += arr[i] + ", ";
+            std::string msg;
+            if (isdigit(arr[0])) {
+                std::string msg = rowToString(arr); 
             }
-            msg += "]";
+            else {
+                std::string msg = "[";
+                for (size_t i = 0; i < arr.size(); i++) {
+                    msg += rowToString(arr[i]);
+                }
+                msg += std::to_string(arr[arr.size()-1]) + "]";
+            }
+            
             return msg;
         }
-    
+
+        // myArray operator*( arr_b) const {
+            
+        // }
     private:
         T arr;
+        std::string rowToString(T row) {
+            std::string msg = "[";
+            for (size_t i = 0; i < row.size()-1; i++) {
+                msg += std::to_string(arr[i]) + ", ";
+            }
+            msg += std::to_string(arr[arr.size()-1]) + "]";
+
+            return msg;
+        }
 };
-
-// 1d array create our array type (like numpy.array([1, 2, 3]))
-std::vector<int> array(std::vector<int> arr_a) {
-    std::vector<int> arr_b;
-    for (size_t i = 0; i < arr_a.size(); i++) {
-        arr_b.push_back(arr_a[i]);
-    }
-    return arr_b;
-}
-
-// // 2d array create our array type (like numpy.array([1, 2, 3]))
-// std::vector<std::vector<int>> array(std::vector<std::vector<int>> arr_a) {
-//     std::vector<std::vector<int>> arr_b;
-//     for (size_t i = 0; i < arr_a.size(); i++) {
-//         arr_b.push_back({});
-//         for (size_t j = 0; j < arr_a.size(); j++) {
-//            arr_b[i].push_back(arr_a[i][j]);
-//         }
-        
-//     }
-//     return arr_b;
-// }
 
 std::vector<std::vector<int>> multiplyVectorMatrix(std::vector<int> arr, std::vector<std::vector<int>> mat) {
     std::vector<std::vector<int>> mat_b = {};
@@ -130,7 +128,7 @@ PYBIND11_MODULE(example, m) {
     pybind11::class_<myArray<std::vector<int>>>(m, "myArray")
         .def(pybind11::init<std::vector<int>>())
         .def("toString", &myArray<std::vector<int>>::toString);
-    m.def("array", &array, "A function that creates a 1d array within our library");
+    // m.def("array", &array, "A function that creates a 1d array within our library");
     // m.def("array", &array<std::vector<std::vector<int>> arr_a>, "A function that creates a 2d array within our library");    
     m.def("multiplyVectorMatrix", &multiplyVectorMatrix, "A function that does vector-matrix multiplication");
     m.def("addVectorVector", &addVectorVector, "A function that adds together values at equivalent indices between two vectors");
