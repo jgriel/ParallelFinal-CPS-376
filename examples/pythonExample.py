@@ -22,7 +22,7 @@ print(x.toString())
 # print(arr_b)
 
 # x = example.Arrays()
-a = numpy.array([[1,2,3]])
+a = numpy.array([1,2,3])
 b = numpy.array([[1,2,3],[4,5,6]])
 x = numpy.multiply(b,a)
 print(x)

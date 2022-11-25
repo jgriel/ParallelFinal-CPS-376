@@ -17,18 +17,27 @@ class myArray {
 
         std::string toString() {
             std::string msg;
-            if (isdigit(arr[0])) {
-                std::string msg = rowToString(arr); 
-            }
-            else {
-                std::string msg = "[";
-                for (size_t i = 0; i < arr.size(); i++) {
-                    msg += rowToString(arr[i]);
-                }
-                msg += std::to_string(arr[arr.size()-1]) + "]";
-            }
-            
-            return msg;
+            std::cout << 
+            // try {
+            //     msg += "[";
+            //     for (size_t i = 0; i < arr.size(); i++) {
+            //         for (size_t j = 0; j < arr.size(); j++) {
+            //             msg += std::to_string(arr[i][j]) + ", ";
+            //         } 
+            //         msg += std::to_string(arr[i][arr[i].size()-1]) + "]";
+            //     }
+               
+            //     msg += "]";
+            // }
+            // catch () {
+            //     msg = "[";
+            //     for (size_t i = 0; i < arr.size()-1; i++) {
+            //         msg += std::to_string(arr[i]) + ", ";
+            //     }
+            //     msg +=  std::to_string(arr[arr.size()-1]) + "]";
+            // }
+
+            // return msg;
         }
 
         // myArray operator*( arr_b) const {
@@ -36,15 +45,7 @@ class myArray {
         // }
     private:
         T arr;
-        std::string rowToString(T row) {
-            std::string msg = "[";
-            for (size_t i = 0; i < row.size()-1; i++) {
-                msg += std::to_string(arr[i]) + ", ";
-            }
-            msg += std::to_string(arr[arr.size()-1]) + "]";
-
-            return msg;
-        }
+      
 };
 
 std::vector<std::vector<int>> multiplyVectorMatrix(std::vector<int> arr, std::vector<std::vector<int>> mat) {
