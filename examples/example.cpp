@@ -8,36 +8,51 @@
 
 // need to make our own struct that acts as an array in order to create the overload 
 
+#define MATRIX_ID "St6vectorIS_IiSaIiEESaIS1_EE"
+#define VECTOR_ID "St6vectorIiSaIiEE"
 template <typename T>
-class myArray {
+class my2dArray {
     public:
-        myArray(T arr_b) {
+        my2dArray(T arr_b) {
             arr = arr_b;
+            tid = typeid(arr).name();
         }
 
         std::string toString() {
-            std::string msg;
-            std::cout << 
-            // try {
-            //     msg += "[";
-            //     for (size_t i = 0; i < arr.size(); i++) {
-            //         for (size_t j = 0; j < arr.size(); j++) {
-            //             msg += std::to_string(arr[i][j]) + ", ";
-            //         } 
-            //         msg += std::to_string(arr[i][arr[i].size()-1]) + "]";
-            //     }
-               
-            //     msg += "]";
-            // }
-            // catch () {
-            //     msg = "[";
-            //     for (size_t i = 0; i < arr.size()-1; i++) {
-            //         msg += std::to_string(arr[i]) + ", ";
-            //     }
-            //     msg +=  std::to_string(arr[arr.size()-1]) + "]";
-            // }
-
-            // return msg;
+            std::string msg = "";
+           
+                std::cout << "matrix" << std::endl;
+                if (arr.size() == 0) {
+                    return "[]";
+                }
+                
+                msg += "[";
+                for (size_t i = 0; i < arr.size()-1; i++) {
+                    msg += "[";
+                    if (arr[i].size() > 0) {
+                        for (size_t j = 0; j < arr[i].size()-1; j++) {
+                            msg += std::to_string(arr[i][j]) + ", ";
+                        } 
+                        msg += std::to_string(arr[i][arr[i].size()-1]) + "], ";
+                    }
+                    else {
+                        msg += "], ";
+                    }
+                }
+                msg += "[";
+                if (arr[arr.size()-1].size() > 0) {
+                    int sizeOfLastArray = arr[arr.size()-1].size();
+                    for (int j = 0; j < sizeOfLastArray - 1; j++) {
+                        msg += std::to_string(arr[arr.size()-1][j]) + ", ";
+                    } 
+                        msg += std::to_string(arr[arr.size()-1][sizeOfLastArray - 1]) + "]";
+                }
+                else {
+                    msg += "]";
+                }
+                msg += "]";
+           
+            return msg;
         }
 
         // myArray operator*( arr_b) const {
@@ -45,8 +60,45 @@ class myArray {
         // }
     private:
         T arr;
+        std::string tid;
       
 };
+template <typename T>
+class my1dArray {
+    public:
+        my1dArray(T arr_b) {
+            arr = arr_b;
+            tid = typeid(arr).name();
+        }
+
+        std::string toString() {
+            std::string msg = "";
+            std::cout << "vector" << std::endl;
+            if (arr.size() == 0) {
+                return "[]";
+            }
+            msg = "[";
+            for (size_t i = 0; i < arr.size()-1; i++) {
+                // std::cout << std::to_string(arr[i]) << std::endl;
+                msg += std::to_string(arr[i]);
+                msg += ", ";
+            }
+
+            msg += std::to_string(arr[arr.size()-1]) + "]";
+            
+
+            return msg;
+        }
+
+        // myArray operator*( arr_b) const {
+            
+        // }
+    private:
+        T arr;
+        std::string tid;
+      
+};
+
 int addInt(int i, int j) {
     return i + j;
 }
@@ -187,9 +239,14 @@ std::vector<int> scalarVector(int x, std::vector<int> arr) {
 PYBIND11_MODULE(example, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
 
-    pybind11::class_<myArray<std::vector<int>>>(m, "myArray")
+    pybind11::class_<my1dArray<std::vector<int>>>(m, "my1dArray")
         .def(pybind11::init<std::vector<int>>())
-        .def("toString", &myArray<std::vector<int>>::toString);
+        .def("toString", &my1dArray<std::vector<int>>::toString);
+    pybind11::class_<my2dArray<std::vector<std::vector<int>>>>(m, "my2dArray")
+        .def(pybind11::init<std::vector<std::vector<int>>>())
+        .def("toString", &my2dArray<std::vector<std::vector<int>>>::toString);
+
+
     // m.def("array", &array, "A function that creates a 1d array within our library");
     // m.def("array", &array<std::vector<std::vector<int>> arr_a>, "A function that creates a 2d array within our library");    
 
