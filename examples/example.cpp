@@ -16,6 +16,42 @@ int multiplyInt(int i, int j) {
     return i * j;
 }
 
+std::vector<std::vector<int>> addMatrixMatrix(std::vector<std::vector<int>> m1, std::vector<std::vector<int>> m2) {
+    std::vector<std::vector<int>> m3 = {};
+    if (m1.size() != m2.size()) {
+        throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+    }
+    for (size_t x = 0; x < m1.size(); x++) {
+        if (m1[x].size() != m2[x].size()) {
+            throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+        }
+        std::vector<int> tmp = {};
+        for (size_t y = 0; y < m1[x].size(); y++) {
+            tmp.push_back(m1[x][y] + m2[x][y]);
+        }
+        m3.push_back(tmp);
+    }
+    return m3;
+}
+
+std::vector<std::vector<int>> subtractMatrixMatrix(std::vector<std::vector<int>> m1, std::vector<std::vector<int>> m2) {
+    std::vector<std::vector<int>> m3 = {};
+    if (m1.size() != m2.size()) {
+        throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+    }
+    for (size_t x = 0; x < m1.size(); x++) {
+        if (m1[x].size() != m2[x].size()) {
+            throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+        }
+        std::vector<int> tmp = {};
+        for (size_t y = 0; y < m1[x].size(); y++) {
+            tmp.push_back(m1[x][y] - m2[x][y]);
+        }
+        m3.push_back(tmp);
+    }
+    return m3;
+}
+
 std::vector<std::vector<int>> multiplyMatrixMatrix(std::vector<std::vector<int>> m1, std::vector<std::vector<int>> m2) {
     std::vector<std::vector<int>> m3 = {};
     for (size_t m1_row = 0; m1_row < m1.size(); m1_row++) {
@@ -117,4 +153,6 @@ PYBIND11_MODULE(example, m) {
     m.def("scalarMatrix", &scalarMatrix, "A function that performs scalar multiplication between an integer and a matrix of integers");
     m.def("scalarVector", &scalarVector, "A function that takes an integer, and performs scalar multiplication on a vector");
     m.def("multiplyMatrixMatrix", &multiplyMatrixMatrix, "A function that peforms matrix multiplication on two matrices of integers");
+    m.def("addMatrixMatrix", &addMatrixMatrix, "A function that peforms matrix addition on two matrices of integers");
+    m.def("subtractMatrixMatrix", &subtractMatrixMatrix, "A function that peforms matrix subtraction on two matrices of integers");
 }
