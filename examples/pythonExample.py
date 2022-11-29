@@ -22,8 +22,8 @@ print(example.subtractMatrixMatrix( [[1,2,3], [4,5,6]], [[1,2,3], [4,5,6]] ))
 
 
 y = example.Array([5, 3, 4, 5])
-print("Arr:", y.toString())
-yy = example.Array([])
-print("Arr:", yy.toString())
-
+print(y[0])
+y[0] = 7
+print(y.toString())
 y = y + 1
+print(y.toString())

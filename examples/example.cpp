@@ -10,39 +10,50 @@
 template <typename T>
 class Array {
     public:
-        Array(T arr_b) {
+        Array(int size) {
+            std::vector<T> tmp;
+            for (int i = 0; i < size; i++) {
+                tmp.push_back(0);
+            }
+            arr = tmp;
+        }
+        Array(std::vector<T> arr_b) {
             arr = arr_b;
-            tid = typeid(arr).name();
+        }
+        
+        T operator[](int i) const {
+            return arr[i];
+        }
+
+        void __setitem__(int i, T x) {
+            arr[i] = x;
+        }
+
+        Array operator+(T x) const {
+            Array tmp = Array(arr.size());
+            for (size_t i = 0; i < arr.size(); i++) {
+                tmp[i] = arr[i] + x;
+            }
+            
+            return tmp;
         }
 
         std::string toString() {
-            std::string msg = "";
-            std::cout << "vector" << std::endl;
             if (arr.size() == 0) {
                 return "[]";
             }
-            msg = "[";
-            for (size_t i = 0; i < arr.size()-1; i++) {
-                // std::cout << std::to_string(arr[i]) << std::endl;
-                msg += std::to_string(arr[i]);
-                msg += ", ";
-            }
 
+            std::string msg = "[";
+            for (size_t i = 0; i < arr.size()-1; i++) {
+                msg += std::to_string(arr[i]) + ", ";
+            }
             msg += std::to_string(arr[arr.size()-1]) + "]";
-            
 
             return msg;
         }
 
-        Array operator+(int x) const {
-            std::cout << "here" << std::endl; 
-            std::cout << typeid(x).name() << std::endl; 
-            
-            return arr;
-        }
     private:
-        T arr;
-        std::string tid;
+        std::vector<T> arr;
       
 };
 
@@ -187,10 +198,20 @@ std::vector<int> scalarVector(int x, std::vector<int> arr) {
 PYBIND11_MODULE(example, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
 
-    pybind11::class_<Array<std::vector<int>>>(m, "Array")
+    pybind11::class_<Array<int>>(m, "Array")
         .def(pybind11::init<std::vector<int>>())
+        .def("__getitem__", &Array<int>::operator[])
+        .def("__setitem__", &Array<int>::__setitem__)
         .def(pybind11::self + int())
-        .def("toString", &Array<std::vector<int>>::toString);
+        .def("toString", &Array<int>::toString);
+
+    // pybind11::class_<Array<double>>(m, "Array")
+    //     .def(pybind11::init<std::vector<double>>())
+    //     .def(pybind11::self + double());
+
+    // pybind11::class_<Array<float>>(m, "Array")
+    //     .def(pybind11::init<std::vector<float>>())
+    //     .def(pybind11::self + float());
 
     m.def("addInt", &addInt, "A function that adds two numbers");
     m.def("subtractInt", &subtractInt, "A function that subtracts two numbers");
