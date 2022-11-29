@@ -1,61 +1,11 @@
+#include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include <pybind11/operators.h>
 #include <iostream>
+#include <string>
 #include <vector>
 
 // To compile c++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) example.cpp -o example$(python3-config --extension-suffix)
-
-
-template <typename T>
-class Array {
-    public:
-        Array(int size) {
-            std::vector<T> tmp;
-            for (int i = 0; i < size; i++) {
-                tmp.push_back(0);
-            }
-            arr = tmp;
-        }
-        Array(std::vector<T> arr_b) {
-            arr = arr_b;
-        }
-        
-        T operator[](int i) const {
-            return arr[i];
-        }
-
-        void __setitem__(int i, T x) {
-            arr[i] = x;
-        }
-
-        Array operator+(T x) const {
-            Array tmp = Array(arr.size());
-            for (size_t i = 0; i < arr.size(); i++) {
-                tmp[i] = arr[i] + x;
-            }
-            
-            return tmp;
-        }
-
-        std::string toString() {
-            if (arr.size() == 0) {
-                return "[]";
-            }
-
-            std::string msg = "[";
-            for (size_t i = 0; i < arr.size()-1; i++) {
-                msg += std::to_string(arr[i]) + ", ";
-            }
-            msg += std::to_string(arr[arr.size()-1]) + "]";
-
-            return msg;
-        }
-
-    private:
-        std::vector<T> arr;
-      
-};
 
 
 int addInt(int i, int j) {
@@ -195,6 +145,139 @@ std::vector<int> scalarVector(int x, std::vector<int> arr) {
     return arr;
 }
 
+template <typename T>
+class Array {
+    public:
+        Array(int size) {
+            std::vector<T> tmp;
+            for (int i = 0; i < size; i++) {
+                tmp.push_back(0);
+            }
+            arr = tmp;
+        }
+        Array(std::vector<T> arr_b) {
+            arr = arr_b;
+        }
+        
+        T operator[](int i) const {
+            return arr[i];
+        }
+
+        void __setitem__(int i, T x) {
+            arr[i] = x;
+        }
+
+        Array operator+(T x) const {
+            Array tmp = arr;
+            for (size_t i = 0; i < arr.size(); i++) {
+                tmp.arr[i] += x;
+            }
+            
+            return tmp;
+        }
+
+        Array operator+=(T x) const {
+            Array tmp = arr;
+            for (size_t i = 0; i < arr.size(); i++) {
+                tmp.arr[i] += x;
+            }
+            
+            return tmp;
+        }
+
+        Array operator-(T x) const {
+            Array tmp = arr;
+            for (size_t i = 0; i < arr.size(); i++) {
+                tmp.arr[i] -= x;
+            }
+            
+            return tmp;
+        }
+
+        Array operator-=(T x) const {
+            Array tmp = arr;
+            for (size_t i = 0; i < arr.size(); i++) {
+                tmp.arr[i] -= x;
+            }
+            
+            return tmp;
+        }
+
+        Array operator*(T x) const {
+            std::vector<T> tmpv = scalarVector(x, arr);
+            Array tmpa = tmpv;
+
+            return tmpa;
+        }
+
+        Array operator*=(T x) const {
+            std::vector<T> tmpv = scalarVector(x, arr);
+            Array tmpa = tmpv;
+
+            return tmpa;
+        }
+
+        Array operator+(Array vec) const {
+            std::vector<T> tmpv = addVectorVector(arr, vec.arr);
+            Array tmpa = tmpv;
+            
+            return tmpa;
+        }
+
+        Array operator+=(Array vec) const {
+            std::vector<T> tmpv = addVectorVector(arr, vec.arr);
+            Array tmpa = tmpv;
+            
+            return tmpa;
+        }
+
+        Array operator-(Array vec) const {
+            std::vector<T> tmpv = subtractVectorVector(arr, vec.arr);
+            Array tmpa = tmpv;
+            
+            return tmpa;
+        }
+
+        Array operator-=(Array vec) const {
+            std::vector<T> tmpv = subtractVectorVector(arr, vec.arr);
+            Array tmpa = tmpv;
+            
+            return tmpa;
+        }
+
+        Array operator*(Array vec) const {
+            std::vector<T> tmpv = multiplyVectorVector(arr, vec.arr);
+            Array tmpa = tmpv;
+            
+            return tmpa;
+        }
+
+        Array operator*=(Array vec) const {
+            std::vector<T> tmpv = multiplyVectorVector(arr, vec.arr);
+            Array tmpa = tmpv;
+            
+            return tmpa;
+        }
+
+        std::string toString() {
+            if (arr.size() == 0) {
+                return "[]";
+            }
+
+            std::string msg = "[";
+            for (size_t i = 0; i < arr.size()-1; i++) {
+                msg += std::to_string(arr[i]) + ", ";
+            }
+            msg += std::to_string(arr[arr.size()-1]) + "]";
+
+            return msg;
+        }
+
+    private:
+        std::vector<T> arr;
+      
+};
+
 PYBIND11_MODULE(example, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
 
@@ -203,6 +286,17 @@ PYBIND11_MODULE(example, m) {
         .def("__getitem__", &Array<int>::operator[])
         .def("__setitem__", &Array<int>::__setitem__)
         .def(pybind11::self + int())
+        .def(pybind11::self += int())
+        .def(pybind11::self - int())
+        .def(pybind11::self -= int())
+        .def(pybind11::self * int())
+        .def(pybind11::self *= int())
+        .def(pybind11::self + pybind11::self)
+        .def(pybind11::self += pybind11::self)
+        .def(pybind11::self - pybind11::self)
+        .def(pybind11::self -= pybind11::self)
+        .def(pybind11::self * pybind11::self)
+        .def(pybind11::self *= pybind11::self)
         .def("toString", &Array<int>::toString);
 
     // pybind11::class_<Array<double>>(m, "Array")
