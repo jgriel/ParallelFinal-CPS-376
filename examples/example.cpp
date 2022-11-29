@@ -9,131 +9,6 @@
 
 // need to make our own struct that acts as an array in order to create the overload 
 
-#define MATRIX_ID "St6vectorIS_IiSaIiEESaIS1_EE"
-#define VECTOR_ID "St6vectorIiSaIiEE"
-template <typename T>
-class Matrix {
-    public:
-        // NOTE: crashes when n = 0
-        Matrix(int n, int m, T value) {
-            std::vector<std::vector<T>> tmp;
-            std::vector<T> subVec = {};
-            for (int i = 0; i < n; i++) {
-                tmp.push_back(subVec);
-                for (int j = 0; j < m; j++) {
-                    tmp[i].push_back(value);
-                }
-            }
-            mat = tmp;
-        }
-
-        Matrix(std::vector<std::vector<T>> mat_b) {
-            mat = mat_b;
-        }
-
-        std::string toString() {
-            std::string msg = "[";
-            for (size_t i = 0; i < mat.size() - 1; i++) {
-                msg += rowToString(mat[i]) + ", ";
-            }
-
-            msg += rowToString(mat[mat.size() - 1]) + "]";
-            return msg;
-        }
-
-        std::vector<T> operator[](int i) const {
-            return mat[i];
-        }
-
-        // set individual element
-        void __setitem__(int i, std::vector<T> x) {
-            mat[i] = x;
-        }
-
-        // Matrix scalar operations
-        Matrix operator+(T a) const {
-            Matrix tmp = mat;
-            for (size_t i = 0; i < mat.size(); i++) {
-                for (size_t j = 0; j < mat[i].size(); j++) {                
-                    tmp.mat[i][j] += a;                    
-                }
-            }
-            
-            return tmp;
-        }
-
-        Matrix operator-(T a) const {
-            Matrix tmp = mat;
-            for (size_t i = 0; i < mat.size(); i++) {
-                for (size_t j = 0; j < mat[i].size(); j++) {                
-                    tmp.mat[i][j] -= a;                    
-                }
-            }
-            
-            return tmp;
-        }
-
-        Matrix operator*(T a) const {
-            Matrix tmp = mat;
-            for (size_t i = 0; i < mat.size(); i++) {
-                for (size_t j = 0; j < mat[i].size(); j++) {                
-                    tmp.mat[i][j] *= a;                    
-                }
-            }
-            
-            return tmp;
-        }
-
-        // Matrix Matrix operations
-        Matrix operator+(Matrix const &mat_b) const {
-            Matrix tmp = mat;
-            for (size_t i = 0; i < mat.size(); i++) {
-                for (size_t j = 0; j < mat[i].size(); j++) {
-                    tmp.mat[i][j] += mat_b.mat[i][j];
-                }
-            }
-            return tmp;
-        }
-
-        Matrix operator-(Matrix const &mat_b) const {
-            Matrix tmp = mat;
-            for (size_t i = 0; i < mat.size(); i++) {
-                for (size_t j = 0; j < mat[i].size(); j++) {
-                    tmp.mat[i][j] -= mat_b.mat[i][j];
-                }
-            }
-            return tmp;
-        }
-
-        // Matrix operator*(Matrix const &mat_b) const {
-        //     // throw error if mat a is nxm and mat_b is not mxp 
-        //     Matrix tmp = Matrix(mat.size(), mat_b[0].size(), 0);
-        //     for (size_t i = 0; i < mat.size(); i++) {
-        //         for size_t j = 0; j < mat_b[0].size(); j ++) {
-        //             tmp.mat[i][j] += mat[i][j] * mat
-        //         }
-        //     }
-        // }
-
-    private:
-        std::vector<std::vector<T>> mat;
-        std::string rowToString(std::vector<T> &row) {
-            std::string msg = "[";
-
-            if (row.size() == 0) {
-                msg = "[]";
-                return msg;
-            }
-            for (size_t j = 0; j < row.size() - 1; j++) {
-                msg += std::to_string(row[j]) + ", ";
-            }
-            msg += std::to_string(row[row.size() - 1]) + "]";
-
-            return msg;
-        }
-      
-};
-
 int addInt(int i, int j) {
     return i + j;
 }
@@ -271,6 +146,129 @@ std::vector<int> scalarVector(int x, std::vector<int> arr) {
     return arr;
 }
 
+template <typename T>
+class Matrix {
+    public:
+        // NOTE: crashes when n = 0
+        Matrix(int n, int m, T value) {
+            std::vector<std::vector<T>> tmp;
+            std::vector<T> subVec = {};
+            for (int i = 0; i < n; i++) {
+                tmp.push_back(subVec);
+                for (int j = 0; j < m; j++) {
+                    tmp[i].push_back(value);
+                }
+            }
+            mat = tmp;
+        }
+
+        Matrix(std::vector<std::vector<T>> mat_b) {
+            mat = mat_b;
+        }
+
+        std::string toString() {
+            std::string msg = "[";
+            for (size_t i = 0; i < mat.size() - 1; i++) {
+                msg += rowToString(mat[i]) + ", ";
+            }
+
+            msg += rowToString(mat[mat.size() - 1]) + "]";
+            return msg;
+        }
+
+        std::vector<T> operator[](int i) const {
+            return mat[i];
+        }
+
+        // set individual element
+        void __setitem__(int i, std::vector<T> x) {
+            mat[i] = x;
+        }
+
+        // Matrix scalar operations
+        Matrix operator+(T a) const {
+            Matrix tmp = mat;
+            for (size_t i = 0; i < mat.size(); i++) {
+                for (size_t j = 0; j < mat[i].size(); j++) {                
+                    tmp.mat[i][j] += a;                    
+                }
+            }
+            
+            return tmp;
+        }
+
+        Matrix operator-(T a) const {
+            Matrix tmp = mat;
+            for (size_t i = 0; i < mat.size(); i++) {
+                for (size_t j = 0; j < mat[i].size(); j++) {                
+                    tmp.mat[i][j] -= a;                    
+                }
+            }
+            
+            return tmp;
+        }
+
+        Matrix operator*(T a) const {
+            Matrix tmp = mat;
+            for (size_t i = 0; i < mat.size(); i++) {
+                for (size_t j = 0; j < mat[i].size(); j++) {                
+                    tmp.mat[i][j] *= a;                    
+                }
+            }
+            
+            return tmp;
+        }
+
+        // Matrix Matrix operations
+        Matrix operator+(Matrix const &mat_b) const {
+            Matrix tmp = mat;
+            for (size_t i = 0; i < mat.size(); i++) {
+                for (size_t j = 0; j < mat[i].size(); j++) {
+                    tmp.mat[i][j] += mat_b.mat[i][j];
+                }
+            }
+            return tmp;
+        }
+
+        Matrix operator-(Matrix const &mat_b) const {
+            Matrix tmp = mat;
+            for (size_t i = 0; i < mat.size(); i++) {
+                for (size_t j = 0; j < mat[i].size(); j++) {
+                    tmp.mat[i][j] -= mat_b.mat[i][j];
+                }
+            }
+            return tmp;
+        }
+
+        Matrix operator*(Matrix const &mat_b) const {
+            // throw error if mat a is nxm and mat_b is not mxp 
+            std::vector<std::vector<T>> x;
+            Matrix tmp = Matrix(x);
+            tmp.mat = multiplyMatrixMatrix(mat, mat_b.mat);
+            return tmp;
+        }
+
+    private:
+        std::vector<std::vector<T>> mat;
+        std::string rowToString(std::vector<T> &row) {
+            std::string msg = "[";
+
+            if (row.size() == 0) {
+                msg = "[]";
+                return msg;
+            }
+            for (size_t j = 0; j < row.size() - 1; j++) {
+                msg += std::to_string(row[j]) + ", ";
+            }
+            msg += std::to_string(row[row.size() - 1]) + "]";
+
+            return msg;
+        }
+      
+};
+
+
+
 PYBIND11_MODULE(example, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
 
@@ -283,7 +281,7 @@ PYBIND11_MODULE(example, m) {
         .def(pybind11::self + int())
         .def(pybind11::self + pybind11::self)
         .def(pybind11::self - pybind11::self)
-        // .def(pybind11::self * pybind11::self)
+        .def(pybind11::self * pybind11::self)
         .def(pybind11::self - int())
         .def(pybind11::self * int());
 

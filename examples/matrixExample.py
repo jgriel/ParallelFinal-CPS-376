@@ -24,3 +24,6 @@ print(c.toString())
 
 c = a - b
 print(c.toString())
+
+c = a * b
+print(c.toString())
