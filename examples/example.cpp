@@ -1,8 +1,51 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/operators.h>
+#include <iostream>
 #include <vector>
 
 // To compile c++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) example.cpp -o example$(python3-config --extension-suffix)
+
+
+template <typename T>
+class Array {
+    public:
+        Array(T arr_b) {
+            arr = arr_b;
+            tid = typeid(arr).name();
+        }
+
+        std::string toString() {
+            std::string msg = "";
+            std::cout << "vector" << std::endl;
+            if (arr.size() == 0) {
+                return "[]";
+            }
+            msg = "[";
+            for (size_t i = 0; i < arr.size()-1; i++) {
+                // std::cout << std::to_string(arr[i]) << std::endl;
+                msg += std::to_string(arr[i]);
+                msg += ", ";
+            }
+
+            msg += std::to_string(arr[arr.size()-1]) + "]";
+            
+
+            return msg;
+        }
+
+        Array operator+(int x) const {
+            std::cout << "here" << std::endl; 
+            std::cout << typeid(x).name() << std::endl; 
+            
+            return arr;
+        }
+    private:
+        T arr;
+        std::string tid;
+      
+};
+
 
 int addInt(int i, int j) {
     return i + j;
@@ -143,6 +186,12 @@ std::vector<int> scalarVector(int x, std::vector<int> arr) {
 
 PYBIND11_MODULE(example, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
+
+    pybind11::class_<Array<std::vector<int>>>(m, "Array")
+        .def(pybind11::init<std::vector<int>>())
+        .def(pybind11::self + int())
+        .def("toString", &Array<std::vector<int>>::toString);
+
     m.def("addInt", &addInt, "A function that adds two numbers");
     m.def("subtractInt", &subtractInt, "A function that subtracts two numbers");
     m.def("multiplyInt", &multiplyInt, "A function that multiplies two numbers");

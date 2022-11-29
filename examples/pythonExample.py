@@ -19,3 +19,11 @@ print(example.multiplyMatrixMatrix( [[1,2,3], [4,5,6]], [[6,5], [4,3], [2,1]] ))
 print(example.multiplyMatrixMatrix( [[6,5], [4,3], [2,1]], [[1,2,3], [4,5,6]] ))
 print(example.addMatrixMatrix( [[1,2,3], [4,5,6]], [[4,5,6], [1,2,3]] ))
 print(example.subtractMatrixMatrix( [[1,2,3], [4,5,6]], [[1,2,3], [4,5,6]] ))
+
+
+y = example.Array([5, 3, 4, 5])
+print("Arr:", y.toString())
+yy = example.Array([])
+print("Arr:", yy.toString())
+
+y = y + 1
