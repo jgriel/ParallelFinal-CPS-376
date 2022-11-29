@@ -36,3 +36,6 @@ print(aa.toString() + "\n")
  
 aa = z * y
 print(aa.toString() + "\n")
+
+example.setProcessors(4)
+print(example.getProcessors())

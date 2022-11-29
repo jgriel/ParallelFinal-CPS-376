@@ -8,6 +8,16 @@
 // To compile c++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) example.cpp -o example$(python3-config --extension-suffix)
 
 
+int P = 1;
+
+void setProcessors(int num) {
+    P = num;
+}
+
+std::string getProcessors() {
+    return std::to_string(P);
+}
+
 int addInt(int i, int j) {
     return i + j;
 }
@@ -184,6 +194,7 @@ class Array {
         Array operator+(T x) const {
             std::vector<T> tmpv = scalarAddVector(x, arr);
             Array tmpa = tmpv;
+            std::cout << P << std::endl;
 
             return tmpa;
         }
@@ -313,6 +324,8 @@ PYBIND11_MODULE(example, m) {
     //     .def(pybind11::init<std::vector<float>>())
     //     .def(pybind11::self + float());
 
+    m.def("setProcessors", &setProcessors, "A function that sets the number of processors for the library");
+    m.def("getProcessors", &getProcessors, "A function that returns the number of processors set for the library");
     m.def("addInt", &addInt, "A function that adds two numbers");
     m.def("subtractInt", &subtractInt, "A function that subtracts two numbers");
     m.def("multiplyInt", &multiplyInt, "A function that multiplies two numbers");
