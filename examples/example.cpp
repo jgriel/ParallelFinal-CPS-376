@@ -85,7 +85,7 @@ class Matrix {
         }
 
         // Matrix Matrix operations
-        Matrix operator+(Matrix mat_b) {
+        Matrix operator+(Matrix const &mat_b) const {
             Matrix tmp = mat;
             for (size_t i = 0; i < mat.size(); i++) {
                 for (size_t j = 0; j < mat[i].size(); j++) {
@@ -95,9 +95,29 @@ class Matrix {
             return tmp;
         }
 
+        Matrix operator-(Matrix const &mat_b) const {
+            Matrix tmp = mat;
+            for (size_t i = 0; i < mat.size(); i++) {
+                for (size_t j = 0; j < mat[i].size(); j++) {
+                    tmp.mat[i][j] -= mat_b.mat[i][j];
+                }
+            }
+            return tmp;
+        }
+
+        // Matrix operator*(Matrix const &mat_b) const {
+        //     // throw error if mat a is nxm and mat_b is not mxp 
+        //     Matrix tmp = Matrix(mat.size(), mat_b[0].size(), 0);
+        //     for (size_t i = 0; i < mat.size(); i++) {
+        //         for size_t j = 0; j < mat_b[0].size(); j ++) {
+        //             tmp.mat[i][j] += mat[i][j] * mat
+        //         }
+        //     }
+        // }
+
     private:
         std::vector<std::vector<T>> mat;
-        std::string rowToString(std::vector<T> row) {
+        std::string rowToString(std::vector<T> &row) {
             std::string msg = "[";
 
             if (row.size() == 0) {
@@ -261,12 +281,12 @@ PYBIND11_MODULE(example, m) {
         .def("__setitem__", &Matrix<int>::operator[])
         .def("toString", &Matrix<int>::toString)
         .def(pybind11::self + int())
+        .def(pybind11::self + pybind11::self)
+        .def(pybind11::self - pybind11::self)
+        // .def(pybind11::self * pybind11::self)
         .def(pybind11::self - int())
         .def(pybind11::self * int());
 
-
-    // m.def("array", &array, "A function that creates a 1d array within our library");
-    // m.def("array", &array<std::vector<std::vector<int>> arr_a>, "A function that creates a 2d array within our library");    
 
     m.def("addInt", &addInt, "A function that adds two numbers");
     m.def("subtractInt", &subtractInt, "A function that subtracts two numbers");

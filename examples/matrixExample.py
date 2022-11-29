@@ -21,3 +21,6 @@ a = example.Matrix([[2, 3], [4, 23]])
 b = example.Matrix([[1, 9], [13, 7]])
 c = a + b
 print(c.toString())
+
+c = a - b
+print(c.toString())
