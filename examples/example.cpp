@@ -138,7 +138,21 @@ std::vector<std::vector<int>> scalarMatrix(int x, std::vector<std::vector<int>> 
     return mat;
 }
 
-std::vector<int> scalarVector(int x, std::vector<int> arr) {
+std::vector<int> scalarAddVector(int x, std::vector<int> arr) {
+    for (size_t i = 0; i < arr.size(); i++) {
+        arr[i] += x;
+    }
+    return arr;
+}
+
+std::vector<int> scalarSubtractVector(int x, std::vector<int> arr) {
+    for (size_t i = 0; i < arr.size(); i++) {
+        arr[i] -= x;
+    }
+    return arr;
+}
+
+std::vector<int> scalarMultiplyVector(int x, std::vector<int> arr) {
     for (size_t i = 0; i < arr.size(); i++) {
         arr[i] *= x;
     }
@@ -168,50 +182,42 @@ class Array {
         }
 
         Array operator+(T x) const {
-            Array tmp = arr;
-            for (size_t i = 0; i < arr.size(); i++) {
-                tmp.arr[i] += x;
-            }
-            
-            return tmp;
+            std::vector<T> tmpv = scalarAddVector(x, arr);
+            Array tmpa = tmpv;
+
+            return tmpa;
         }
 
         Array operator+=(T x) const {
-            Array tmp = arr;
-            for (size_t i = 0; i < arr.size(); i++) {
-                tmp.arr[i] += x;
-            }
-            
-            return tmp;
+            std::vector<T> tmpv = scalarAddVector(x, arr);
+            Array tmpa = tmpv;
+
+            return tmpa;
         }
 
         Array operator-(T x) const {
-            Array tmp = arr;
-            for (size_t i = 0; i < arr.size(); i++) {
-                tmp.arr[i] -= x;
-            }
-            
-            return tmp;
+            std::vector<T> tmpv = scalarSubtractVector(x, arr);
+            Array tmpa = tmpv;
+
+            return tmpa;
         }
 
         Array operator-=(T x) const {
-            Array tmp = arr;
-            for (size_t i = 0; i < arr.size(); i++) {
-                tmp.arr[i] -= x;
-            }
-            
-            return tmp;
+            std::vector<T> tmpv = scalarSubtractVector(x, arr);
+            Array tmpa = tmpv;
+
+            return tmpa;
         }
 
         Array operator*(T x) const {
-            std::vector<T> tmpv = scalarVector(x, arr);
+            std::vector<T> tmpv = scalarMultiplyVector(x, arr);
             Array tmpa = tmpv;
 
             return tmpa;
         }
 
         Array operator*=(T x) const {
-            std::vector<T> tmpv = scalarVector(x, arr);
+            std::vector<T> tmpv = scalarMultiplyVector(x, arr);
             Array tmpa = tmpv;
 
             return tmpa;
@@ -315,7 +321,9 @@ PYBIND11_MODULE(example, m) {
     m.def("subtractVectorVector", &subtractVectorVector, "A function that subtracts two values at equivalent indices between two vectors");
     m.def("multiplyVectorVector", &multiplyVectorVector, "A function that multiplies two values at equivalent indices between two vectors");
     m.def("scalarMatrix", &scalarMatrix, "A function that performs scalar multiplication between an integer and a matrix of integers");
-    m.def("scalarVector", &scalarVector, "A function that takes an integer, and performs scalar multiplication on a vector");
+    m.def("scalarAddVector", &scalarAddVector, "A function that takes an integer, and performs scalar addition on a vector");
+    m.def("scalarSubtractVector", &scalarSubtractVector, "A function that takes an integer, and performs scalar subtraction on a vector");
+    m.def("scalarMultiplyVector", &scalarMultiplyVector, "A function that takes an integer, and performs scalar multiplication on a vector");
     m.def("multiplyMatrixMatrix", &multiplyMatrixMatrix, "A function that peforms matrix multiplication on two matrices of integers");
     m.def("addMatrixMatrix", &addMatrixMatrix, "A function that peforms matrix addition on two matrices of integers");
     m.def("subtractMatrixMatrix", &subtractMatrixMatrix, "A function that peforms matrix subtraction on two matrices of integers");
