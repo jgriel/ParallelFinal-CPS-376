@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/operators.h>
 #include <vector>
 #include <iostream>
 #include <string>
@@ -13,6 +14,19 @@
 template <typename T>
 class Matrix {
     public:
+        // NOTE: crashes when n = 0
+        Matrix(int n, int m, T value) {
+            std::vector<std::vector<T>> tmp;
+            std::vector<T> subVec = {};
+            for (int i = 0; i < n; i++) {
+                tmp.push_back(subVec);
+                for (int j = 0; j < m; j++) {
+                    tmp[i].push_back(value);
+                }
+            }
+            mat = tmp;
+        }
+
         Matrix(std::vector<std::vector<T>> mat_b) {
             mat = mat_b;
         }
@@ -27,16 +41,59 @@ class Matrix {
             return msg;
         }
 
-        // Matrix operator+(T a) const {
-        //     for (int i = 0; i < mat.size(); i++) {
-        //         for (int j = 0; j < mat[i].size(); j++) {
-        //             mat[i][j] += a;
-        //         }
-        //     }
-            
-        //     return &mat;
-        // }
+        std::vector<T> operator[](int i) const {
+            return mat[i];
+        }
 
+        // set individual element
+        void __setitem__(int i, std::vector<T> x) {
+            mat[i] = x;
+        }
+
+        // Matrix scalar operations
+        Matrix operator+(T a) const {
+            Matrix tmp = mat;
+            for (size_t i = 0; i < mat.size(); i++) {
+                for (size_t j = 0; j < mat[i].size(); j++) {                
+                    tmp.mat[i][j] += a;                    
+                }
+            }
+            
+            return tmp;
+        }
+
+        Matrix operator-(T a) const {
+            Matrix tmp = mat;
+            for (size_t i = 0; i < mat.size(); i++) {
+                for (size_t j = 0; j < mat[i].size(); j++) {                
+                    tmp.mat[i][j] -= a;                    
+                }
+            }
+            
+            return tmp;
+        }
+
+        Matrix operator*(T a) const {
+            Matrix tmp = mat;
+            for (size_t i = 0; i < mat.size(); i++) {
+                for (size_t j = 0; j < mat[i].size(); j++) {                
+                    tmp.mat[i][j] *= a;                    
+                }
+            }
+            
+            return tmp;
+        }
+
+        // Matrix Matrix operations
+        Matrix operator+(Matrix mat_b) {
+            Matrix tmp = mat;
+            for (size_t i = 0; i < mat.size(); i++) {
+                for (size_t j = 0; j < mat[i].size(); j++) {
+                    tmp.mat[i][j] += mat_b.mat[i][j];
+                }
+            }
+            return tmp;
+        }
 
     private:
         std::vector<std::vector<T>> mat;
@@ -199,8 +256,14 @@ PYBIND11_MODULE(example, m) {
 
     pybind11::class_<Matrix<int>>(m, "Matrix")
         .def(pybind11::init<std::vector<std::vector<int>>>())
-        // .def(pybind11::self + int());
-        .def("toString", &Matrix<int>::toString);
+        .def(pybind11::init<int, int, int>())
+        .def("__getitem__", &Matrix<int>::__setitem__)
+        .def("__setitem__", &Matrix<int>::operator[])
+        .def("toString", &Matrix<int>::toString)
+        .def(pybind11::self + int())
+        .def(pybind11::self - int())
+        .def(pybind11::self * int());
+
 
     // m.def("array", &array, "A function that creates a 1d array within our library");
     // m.def("array", &array<std::vector<std::vector<int>> arr_a>, "A function that creates a 2d array within our library");    
