@@ -1,8 +1,22 @@
+#include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <iostream>
+#include <string>
 #include <vector>
 
 // To compile c++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) example.cpp -o example$(python3-config --extension-suffix)
+
+
+int P = 1;
+
+void setProcessors(int num) {
+    P = num;
+}
+
+std::string getProcessors() {
+    return std::to_string(P);
+}
 
 int addInt(int i, int j) {
     return i + j;
@@ -134,15 +148,215 @@ std::vector<std::vector<int>> scalarMatrix(int x, std::vector<std::vector<int>> 
     return mat;
 }
 
-std::vector<int> scalarVector(int x, std::vector<int> arr) {
+std::vector<int> scalarAddVector(int x, std::vector<int> arr) {
+    for (size_t i = 0; i < arr.size(); i++) {
+        arr[i] += x;
+    }
+    return arr;
+}
+
+std::vector<int> scalarSubtractVector(int x, std::vector<int> arr) {
+    for (size_t i = 0; i < arr.size(); i++) {
+        arr[i] -= x;
+    }
+    return arr;
+}
+
+std::vector<int> scalarMultiplyVector(int x, std::vector<int> arr) {
     for (size_t i = 0; i < arr.size(); i++) {
         arr[i] *= x;
     }
     return arr;
 }
 
+template <typename T>
+class Array {
+    public:
+        Array(int size, T value = 0) {
+            std::vector<T> tmp;
+            for (int i = 0; i < size; i++) {
+                tmp.push_back(value);
+            }
+            arr = tmp;
+        }
+        Array(std::vector<T> arr_b) {
+            arr = arr_b;
+        }
+
+        Array scalarAdd(T x) const {
+            Array tmp = arr;
+            for (size_t i = 0; i < tmp.arr.size(); i++) {
+                tmp.arr[i] += x;
+            }
+            return tmp;
+        }
+
+        Array scalarSubtract(T x) const {
+            Array tmp = arr;
+            for (size_t i = 0; i < tmp.arr.size(); i++) {
+                tmp.arr[i] -= x;
+            }
+            return tmp;
+        }
+
+        Array scalarMultiply(T x) const {
+            Array tmp = arr;
+            for (size_t i = 0; i < tmp.arr.size(); i++) {
+                tmp.arr[i] *= x;
+            }
+            return tmp;
+        }
+
+        Array addArray(Array arr_y) const {
+            Array tmp = arr;
+            if (tmp.arr.size() != arr_y.arr.size()){
+                throw std::invalid_argument("Length of vectors must the same!");
+            }
+
+            for (size_t i = 0; i < tmp.arr.size(); i++) {
+                tmp.arr[i] += arr_y.arr[i];
+            }
+            return tmp;
+        }
+
+        Array subtractArray(Array arr_y) const {
+            Array tmp = arr;
+            if (tmp.arr.size() != arr_y.arr.size()){
+                throw std::invalid_argument("Length of vectors must the same!");
+            }
+
+            for (size_t i = 0; i < tmp.arr.size(); i++) {
+                tmp.arr[i] -= arr_y.arr[i];
+            }
+            return tmp;
+        }
+
+        Array multiplyArray(Array arr_y) const {
+            Array tmp = arr;
+            if (tmp.arr.size() != arr_y.arr.size()){
+                throw std::invalid_argument("Length of vectors must the same!");
+            }
+
+            for (size_t i = 0; i < tmp.arr.size(); i++) {
+                tmp.arr[i] *= arr_y.arr[i];
+            }
+            return tmp;
+        }
+        
+        T operator[](int i) const {
+            return arr[i];
+        }
+
+        void __setitem__(int i, T x) {
+            arr[i] = x;
+        }
+
+        Array operator+(T x) const {
+            return scalarAdd(x);
+        }
+
+        Array operator+=(T x) const {
+            return scalarAdd(x);
+        }
+
+        Array operator-(T x) const {
+            return scalarSubtract(x);
+        }
+
+        Array operator-=(T x) const {
+            return scalarSubtract(x);
+        }
+
+        Array operator*(T x) const {
+            return scalarMultiply(x);
+        }
+
+        Array operator*=(T x) const {
+            return scalarMultiply(x);
+        }
+
+        Array operator+(Array vec) const {
+            return addArray(vec);
+        }
+
+        Array operator+=(Array vec) const {
+            return addArray(vec);
+        }
+
+        Array operator-(Array vec) const {
+            return subtractArray(vec);
+        }
+
+        Array operator-=(Array vec) const {
+            return subtractArray(vec);
+        }
+
+        Array operator*(Array vec) const {
+            return multiplyArray(vec);
+        }
+
+        Array operator*=(Array vec) const {
+            return multiplyArray(vec);
+        }
+
+        std::string toString() {
+            if (arr.size() == 0) {
+                return "[]";
+            }
+
+            std::string msg = "[";
+            for (size_t i = 0; i < arr.size()-1; i++) {
+                msg += std::to_string(arr[i]) + ", ";
+            }
+            msg += std::to_string(arr[arr.size()-1]) + "]";
+
+            return msg;
+        }
+
+    private:
+        std::vector<T> arr;
+      
+};
+
 PYBIND11_MODULE(example, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
+
+    pybind11::class_<Array<int>>(m, "Array")
+        .def(pybind11::init<std::vector<int>>())
+        .def(pybind11::init<int, int>())
+        .def(pybind11::init<int>())
+        .def("scalarAdd", &Array<int>::scalarAdd)
+        .def("scalarSubtract", &Array<int>::scalarSubtract)
+        .def("scalarMultiply", &Array<int>::scalarMultiply)
+        .def("addArray", &Array<int>::addArray)
+        .def("subtractArray", &Array<int>::subtractArray)
+        .def("multiplyArray", &Array<int>::multiplyArray)
+        .def("__getitem__", &Array<int>::operator[])
+        .def("__setitem__", &Array<int>::__setitem__)
+        .def(pybind11::self + int())
+        .def(pybind11::self += int())
+        .def(pybind11::self - int())
+        .def(pybind11::self -= int())
+        .def(pybind11::self * int())
+        .def(pybind11::self *= int())
+        .def(pybind11::self + pybind11::self)
+        .def(pybind11::self += pybind11::self)
+        .def(pybind11::self - pybind11::self)
+        .def(pybind11::self -= pybind11::self)
+        .def(pybind11::self * pybind11::self)
+        .def(pybind11::self *= pybind11::self)
+        .def("toString", &Array<int>::toString);
+
+    // pybind11::class_<Array<double>>(m, "Array")
+    //     .def(pybind11::init<std::vector<double>>())
+    //     .def(pybind11::self + double());
+
+    // pybind11::class_<Array<float>>(m, "Array")
+    //     .def(pybind11::init<std::vector<float>>())
+    //     .def(pybind11::self + float());
+
+    m.def("setProcessors", &setProcessors, "A function that sets the number of processors for the library");
+    m.def("getProcessors", &getProcessors, "A function that returns the number of processors set for the library");
     m.def("addInt", &addInt, "A function that adds two numbers");
     m.def("subtractInt", &subtractInt, "A function that subtracts two numbers");
     m.def("multiplyInt", &multiplyInt, "A function that multiplies two numbers");
@@ -151,7 +365,9 @@ PYBIND11_MODULE(example, m) {
     m.def("subtractVectorVector", &subtractVectorVector, "A function that subtracts two values at equivalent indices between two vectors");
     m.def("multiplyVectorVector", &multiplyVectorVector, "A function that multiplies two values at equivalent indices between two vectors");
     m.def("scalarMatrix", &scalarMatrix, "A function that performs scalar multiplication between an integer and a matrix of integers");
-    m.def("scalarVector", &scalarVector, "A function that takes an integer, and performs scalar multiplication on a vector");
+    m.def("scalarAddVector", &scalarAddVector, "A function that takes an integer, and performs scalar addition on a vector");
+    m.def("scalarSubtractVector", &scalarSubtractVector, "A function that takes an integer, and performs scalar subtraction on a vector");
+    m.def("scalarMultiplyVector", &scalarMultiplyVector, "A function that takes an integer, and performs scalar multiplication on a vector");
     m.def("multiplyMatrixMatrix", &multiplyMatrixMatrix, "A function that peforms matrix multiplication on two matrices of integers");
     m.def("addMatrixMatrix", &addMatrixMatrix, "A function that peforms matrix addition on two matrices of integers");
     m.def("subtractMatrixMatrix", &subtractMatrixMatrix, "A function that peforms matrix subtraction on two matrices of integers");
