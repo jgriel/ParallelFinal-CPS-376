@@ -319,12 +319,21 @@ class Matrix {
         Matrix operator+(T a) const {
             return scalarAdd(a);
         }
+        Matrix operator+=(T a) const {
+            return scalarAdd(a);
+        }
 
         Matrix operator-(T a) const {
             return scalarSubtract(a);
         }
+        Matrix operator-=(T a) const {
+            return scalarSubtract(a);
+        }
 
         Matrix operator*(T a) const {
+            return scalarMultiply(a);
+        }
+        Matrix operator*=(T a) const {
             return scalarMultiply(a);
         }
 
@@ -536,8 +545,11 @@ PYBIND11_MODULE(example, m) {
         .def("scalarAdd", &Matrix<int>::scalarAdd)
         .def("scalarSubtract", &Matrix<int>::scalarSubtract)
         .def(pybind11::self + int())
+        .def(pybind11::self += int())
         .def(pybind11::self - int())
+        .def(pybind11::self -= int())
         .def(pybind11::self * int())
+        .def(pybind11::self *= int())
         .def(pybind11::self + pybind11::self)
         .def(pybind11::self += pybind11::self)
         .def(pybind11::self - pybind11::self)
