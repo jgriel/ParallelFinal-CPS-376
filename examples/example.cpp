@@ -172,10 +172,10 @@ std::vector<int> scalarMultiplyVector(int x, std::vector<int> arr) {
 template <typename T>
 class Array {
     public:
-        Array(int size) {
+        Array(int size, T value = 0) {
             std::vector<T> tmp;
             for (int i = 0; i < size; i++) {
-                tmp.push_back(0);
+                tmp.push_back(value);
             }
             arr = tmp;
         }
