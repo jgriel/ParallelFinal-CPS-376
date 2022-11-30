@@ -139,10 +139,28 @@ std::vector<int> multiplyVectorVector(std::vector<int> arr_x, std::vector<int> a
     return arr_z;
 }
 
-std::vector<std::vector<int>> scalarMatrix(int x, std::vector<std::vector<int>> mat) {
+std::vector<std::vector<int>> scalarMatrixMultiply(int x, std::vector<std::vector<int>> mat) {
     for (size_t i = 0; i < mat.size(); i++) {
         for (size_t j = 0; j < mat[i].size(); j++) {
             mat[i][j] *= x;
+        }
+    }
+    return mat;
+}
+
+std::vector<std::vector<int>> scalarMatrixAdd(int x, std::vector<std::vector<int>> mat) {
+    for (size_t i = 0; i < mat.size(); i++) {
+        for (size_t j = 0; j < mat[i].size(); j++) {
+            mat[i][j] += x;
+        }
+    }
+    return mat;
+}
+
+std::vector<std::vector<int>> scalarMatrixSubtract(int x, std::vector<std::vector<int>> mat) {
+    for (size_t i = 0; i < mat.size(); i++) {
+        for (size_t j = 0; j < mat[i].size(); j++) {
+            mat[i][j] -= x;
         }
     }
     return mat;
@@ -168,6 +186,188 @@ std::vector<int> scalarMultiplyVector(int x, std::vector<int> arr) {
     }
     return arr;
 }
+
+
+template <typename T>
+class Matrix {
+    public:
+        // NOTE: crashes when n = 0
+        Matrix(int rows, int cols, T value = 0) {
+            std::vector<std::vector<T>> tmp;
+            std::vector<T> subVec = {};
+            for (int i = 0; i < rows; i++) {
+                tmp.push_back(subVec);
+                for (int j = 0; j < cols; j++) {
+                    tmp[i].push_back(value);
+                }
+            }
+            mat = tmp;
+        }
+
+        Matrix(std::vector<std::vector<T>> mat_b) {
+            mat = mat_b;
+        }
+
+        std::string toString() {
+            std::string msg = "[";
+            for (size_t i = 0; i < mat.size() - 1; i++) {
+                msg += rowToString(mat[i]) + ", ";
+            }
+
+            msg += rowToString(mat[mat.size() - 1]) + "]";
+            return msg;
+        }
+
+        Matrix addMatrix(Matrix const &m1) const{
+            Matrix m3 = Matrix(mat.size(), mat[0].size(), 0);
+            if (mat.size() != m1.mat.size()) {
+                throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+            }
+            for (size_t x = 0; x < m1.mat.size(); x++) {
+                if (mat[x].size() != m1.mat[x].size()) {
+                    throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+                }
+                for (size_t y = 0; y < mat[x].size(); y++) {
+                    m3.mat[x][y] = mat[x][y] + m1.mat[x][y];
+                }
+            }
+            return m3;
+        }
+
+        Matrix subtractMatrix(Matrix const &m1) const{
+            Matrix m3 = Matrix(mat.size(), mat[0].size(), 0);
+            if (mat.size() != m1.mat.size()) {
+                throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+            }
+            for (size_t x = 0; x < m1.mat.size(); x++) {
+                if (mat[x].size() != m1.mat[x].size()) {
+                    throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+                }
+                for (size_t y = 0; y < mat[x].size(); y++) {
+                    m3.mat[x][y] = mat[x][y] - m1.mat[x][y];
+                }
+            }
+            return m3;
+        }
+
+        Matrix multiplyMatrix(Matrix const &m1) const {
+            Matrix tmp_mat = Matrix(mat.size(), m1[0].size(), 0);
+            for (size_t mat_row = 0; mat_row < mat.size(); mat_row++) {
+                if (mat[mat_row].size() != m1.mat.size()) {
+                    throw std::invalid_argument("Columns in each row of matrix #1 must equal length number of rows in matrix #2!");
+                }
+                for (size_t m1_col = 0; m1_col < m1.mat[0].size(); m1_col++) {
+                    int acc = 0;
+                    for (size_t idx = 0; idx < mat[mat_row].size(); idx++) {
+                        if (mat.size() != m1.mat[idx].size()) {
+                            throw std::invalid_argument("Length of each column in matrix #1 must equal length of each row in matrix #2!");
+                        }
+                        acc += mat[mat_row][idx] * m1.mat[idx][m1_col];
+                    }
+                    tmp_mat.mat[mat_row][m1_col] = acc;
+                }
+            }
+            return tmp_mat;
+        }
+
+        Matrix scalarMultiply(T const &x) const {
+            Matrix tmp_mat = Matrix(mat.size(), mat[0].size(), 0);
+            for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
+                for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
+                    tmp_mat.mat[i][j] *= x;
+                }
+            }
+            return tmp_mat;
+        }
+
+        Matrix scalarAdd(T const &x) const {
+            Matrix tmp_mat = Matrix(mat.size(), mat[0].size(), 0);
+            for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
+                for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
+                    tmp_mat.mat[i][j] += x;
+                }
+            }
+            return tmp_mat;
+        }
+
+        Matrix scalarSubtract(T const &x) const {
+            Matrix tmp_mat = Matrix(mat.size(), mat[0].size(), 0);
+            for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
+                for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
+                    tmp_mat.mat[i][j] -= x;
+                }
+            }
+            return tmp_mat;
+        }
+
+        //__getitem__
+        std::vector<T> operator[](int i) const {
+            return mat[i];
+        }
+
+        // set individual element
+        // void __setitem__(int i, int j, T x) {
+        //     mat[i][j] = x;
+        // }
+
+        //set entire row
+        void __setitem__(int i, std::vector<T> x) {
+            mat[i] = x;
+        }
+
+        // Matrix scalar operations
+        Matrix operator+(T a) const {
+            return scalarAdd(a);
+        }
+
+        Matrix operator-(T a) const {
+            return scalarSubtract(a);
+        }
+
+        Matrix operator*(T a) const {
+            return scalarMultiply(a);
+        }
+
+        // Matrix Matrix operations
+        Matrix operator+(Matrix const &mat_b) const {
+            return addMatrix(mat_b);
+        }
+        Matrix operator+=(Matrix const &mat_b) const {
+            return addMatrix(mat_b);
+        }
+
+        Matrix operator-(Matrix const &mat_b) const {
+            return subtractMatrix(mat_b);
+        }
+        Matrix operator-=(Matrix const &mat_b) const {
+            return subtractMatrix(mat_b);
+        }
+
+        Matrix operator*(Matrix const &mat_b) const {
+            return multiplyMatrix(mat_b);
+        }
+        Matrix operator*=(Matrix const &mat_b) const {
+            return multiplyMatrix(mat_b);
+        }
+
+    private:
+        std::vector<std::vector<T>> mat;
+        std::string rowToString(std::vector<T> &row) {
+            std::string msg = "[";
+
+            if (row.size() == 0) {
+                msg = "[]";
+                return msg;
+            }
+            for (size_t j = 0; j < row.size() - 1; j++) {
+                msg += std::to_string(row[j]) + ", ";
+            }
+            msg += std::to_string(row[row.size() - 1]) + "]";
+
+            return msg;
+        }
+      
+};
 
 template <typename T>
 class Array {
@@ -318,9 +518,36 @@ class Array {
       
 };
 
+
 PYBIND11_MODULE(example, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
 
+    pybind11::class_<Matrix<int>>(m, "Matrix")
+        .def(pybind11::init<std::vector<std::vector<int>>>())
+        .def(pybind11::init<int, int, int>())
+        .def(pybind11::init<int, int>())
+        .def("__setitem__", &Matrix<int>::__setitem__)
+        .def("__getitem__", &Matrix<int>::operator[])
+        .def("toString", &Matrix<int>::toString)
+        .def("addMatrix", &Matrix<int>::addMatrix)
+        .def("subtractMatrix", &Matrix<int>::subtractMatrix)
+        .def("multiplyMatrix", &Matrix<int>::multiplyMatrix)
+        .def("scalarMultiply", &Matrix<int>::scalarMultiply)
+        .def("scalarAdd", &Matrix<int>::scalarAdd)
+        .def("scalarSubtract", &Matrix<int>::scalarSubtract)
+        .def(pybind11::self + int())
+        .def(pybind11::self += int())
+        .def(pybind11::self - int())
+        .def(pybind11::self -= int())
+        .def(pybind11::self * int())
+        .def(pybind11::self *= int())
+        .def(pybind11::self + pybind11::self)
+        .def(pybind11::self += pybind11::self)
+        .def(pybind11::self - pybind11::self)
+        .def(pybind11::self -= pybind11::self)
+        .def(pybind11::self * pybind11::self)
+        .def(pybind11::self *= pybind11::self)
+        
     pybind11::class_<Array<int>>(m, "Array")
         .def(pybind11::init<std::vector<int>>())
         .def(pybind11::init<int, int>())
@@ -364,6 +591,10 @@ PYBIND11_MODULE(example, m) {
     m.def("addVectorVector", &addVectorVector, "A function that adds together values at equivalent indices between two vectors");
     m.def("subtractVectorVector", &subtractVectorVector, "A function that subtracts two values at equivalent indices between two vectors");
     m.def("multiplyVectorVector", &multiplyVectorVector, "A function that multiplies two values at equivalent indices between two vectors");
+    m.def("scalarMatrixMultiply", &scalarMatrixMultiply, "A function that performs scalar multiplication between an integer and a matrix of integers");
+    m.def("scalarMatrixAdd", &scalarMatrixAdd, "A function that performs scalar multiplication between an integer and a matrix of integers");
+    m.def("scalarMatrixSubtract", &scalarMatrixSubtract, "A function that performs scalar multiplication between an integer and a matrix of integers");
+    m.def("scalarVector", &scalarVector, "A function that takes an integer, and performs scalar multiplication on a vector");
     m.def("scalarMatrix", &scalarMatrix, "A function that performs scalar multiplication between an integer and a matrix of integers");
     m.def("scalarAddVector", &scalarAddVector, "A function that takes an integer, and performs scalar addition on a vector");
     m.def("scalarSubtractVector", &scalarSubtractVector, "A function that takes an integer, and performs scalar subtraction on a vector");
