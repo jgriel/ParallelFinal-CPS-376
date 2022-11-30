@@ -58,3 +58,8 @@ print(aa.toString())
 a = example.Array([2, 2, 2, 2])
 aa = aa.multiplyArray(a)
 print(aa.toString() + "\n")
+
+z = example.Array(5)
+print(z.toString())
+z = example.Array(5, 7)
+print(z.toString() + "\n")

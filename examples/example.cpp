@@ -323,6 +323,8 @@ PYBIND11_MODULE(example, m) {
 
     pybind11::class_<Array<int>>(m, "Array")
         .def(pybind11::init<std::vector<int>>())
+        .def(pybind11::init<int, int>())
+        .def(pybind11::init<int>())
         .def("scalarAdd", &Array<int>::scalarAdd)
         .def("scalarSubtract", &Array<int>::scalarSubtract)
         .def("scalarMultiply", &Array<int>::scalarMultiply)
