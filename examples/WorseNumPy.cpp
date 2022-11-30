@@ -301,6 +301,22 @@ class Matrix {
             return tmp_mat;
         }
 
+        // Matrix multiplyVectorMatrix(Array arr) {
+            // std::vector<std::vector<int>> mat_b = {};
+            // for (size_t i = 0; i < mat.size(); i++) {
+            //     if (arr.size() != mat[i].size()) {
+            //         throw std::invalid_argument("Length of all rows in the matrix must == legnth of the vector!");
+            //     }
+
+            //     mat_b.push_back({});
+            //     for (size_t j = 0; j < mat[i].size(); j++) {
+            //         mat_b[i].push_back(arr[j] * mat[i][j]);
+            //     }
+            // }
+        //     Matrix tmp = Matrix(0,0,0);
+        //     return tmp;
+        // }
+
         //__getitem__
         std::vector<T> operator[](int i) const {
             return mat[i];
@@ -360,6 +376,7 @@ class Matrix {
             return multiplyMatrix(mat_b);
         }
 
+        // Matrix Vector Opertations
     private:
         std::vector<std::vector<T>> mat;
         std::string rowToString(std::vector<T> &row) {
