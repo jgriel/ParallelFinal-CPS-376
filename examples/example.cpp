@@ -536,17 +536,14 @@ PYBIND11_MODULE(example, m) {
         .def("scalarAdd", &Matrix<int>::scalarAdd)
         .def("scalarSubtract", &Matrix<int>::scalarSubtract)
         .def(pybind11::self + int())
-        .def(pybind11::self += int())
         .def(pybind11::self - int())
-        .def(pybind11::self -= int())
         .def(pybind11::self * int())
-        .def(pybind11::self *= int())
         .def(pybind11::self + pybind11::self)
         .def(pybind11::self += pybind11::self)
         .def(pybind11::self - pybind11::self)
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
-        .def(pybind11::self *= pybind11::self)
+        .def(pybind11::self *= pybind11::self);
         
     pybind11::class_<Array<int>>(m, "Array")
         .def(pybind11::init<std::vector<int>>())
@@ -594,8 +591,6 @@ PYBIND11_MODULE(example, m) {
     m.def("scalarMatrixMultiply", &scalarMatrixMultiply, "A function that performs scalar multiplication between an integer and a matrix of integers");
     m.def("scalarMatrixAdd", &scalarMatrixAdd, "A function that performs scalar multiplication between an integer and a matrix of integers");
     m.def("scalarMatrixSubtract", &scalarMatrixSubtract, "A function that performs scalar multiplication between an integer and a matrix of integers");
-    m.def("scalarVector", &scalarVector, "A function that takes an integer, and performs scalar multiplication on a vector");
-    m.def("scalarMatrix", &scalarMatrix, "A function that performs scalar multiplication between an integer and a matrix of integers");
     m.def("scalarAddVector", &scalarAddVector, "A function that takes an integer, and performs scalar addition on a vector");
     m.def("scalarSubtractVector", &scalarSubtractVector, "A function that takes an integer, and performs scalar subtraction on a vector");
     m.def("scalarMultiplyVector", &scalarMultiplyVector, "A function that takes an integer, and performs scalar multiplication on a vector");
