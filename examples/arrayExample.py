@@ -39,3 +39,22 @@ print(aa.toString() + "\n")
 
 example.setProcessors(4)
 print(example.getProcessors())
+print()
+
+aa = z + y
+print(aa.toString())
+a = example.Array([1, 1, 1, 1])
+aa = aa.addArray(a)
+print(aa.toString() + "\n")
+
+aa = z + y
+print(aa.toString())
+a = example.Array([1, 1, 1, 1])
+aa = aa.subtractArray(a)
+print(aa.toString() + "\n")
+
+aa = z + y
+print(aa.toString())
+a = example.Array([2, 2, 2, 2])
+aa = aa.multiplyArray(a)
+print(aa.toString() + "\n")

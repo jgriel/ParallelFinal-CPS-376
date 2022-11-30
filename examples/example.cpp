@@ -182,6 +182,66 @@ class Array {
         Array(std::vector<T> arr_b) {
             arr = arr_b;
         }
+
+        Array scalarAdd(T x) const {
+            Array tmp = arr;
+            for (size_t i = 0; i < tmp.arr.size(); i++) {
+                tmp.arr[i] += x;
+            }
+            return tmp;
+        }
+
+        Array scalarSubtract(T x) const {
+            Array tmp = arr;
+            for (size_t i = 0; i < tmp.arr.size(); i++) {
+                tmp.arr[i] -= x;
+            }
+            return tmp;
+        }
+
+        Array scalarMultiply(T x) const {
+            Array tmp = arr;
+            for (size_t i = 0; i < tmp.arr.size(); i++) {
+                tmp.arr[i] *= x;
+            }
+            return tmp;
+        }
+
+        Array addArray(Array arr_y) const {
+            Array tmp = arr;
+            if (tmp.arr.size() != arr_y.arr.size()){
+                throw std::invalid_argument("Length of vectors must the same!");
+            }
+
+            for (size_t i = 0; i < tmp.arr.size(); i++) {
+                tmp.arr[i] += arr_y.arr[i];
+            }
+            return tmp;
+        }
+
+        Array subtractArray(Array arr_y) const {
+            Array tmp = arr;
+            if (tmp.arr.size() != arr_y.arr.size()){
+                throw std::invalid_argument("Length of vectors must the same!");
+            }
+
+            for (size_t i = 0; i < tmp.arr.size(); i++) {
+                tmp.arr[i] -= arr_y.arr[i];
+            }
+            return tmp;
+        }
+
+        Array multiplyArray(Array arr_y) const {
+            Array tmp = arr;
+            if (tmp.arr.size() != arr_y.arr.size()){
+                throw std::invalid_argument("Length of vectors must the same!");
+            }
+
+            for (size_t i = 0; i < tmp.arr.size(); i++) {
+                tmp.arr[i] *= arr_y.arr[i];
+            }
+            return tmp;
+        }
         
         T operator[](int i) const {
             return arr[i];
@@ -192,88 +252,51 @@ class Array {
         }
 
         Array operator+(T x) const {
-            std::vector<T> tmpv = scalarAddVector(x, arr);
-            Array tmpa = tmpv;
-            std::cout << P << std::endl;
-
-            return tmpa;
+            return scalarAdd(x);
         }
 
         Array operator+=(T x) const {
-            std::vector<T> tmpv = scalarAddVector(x, arr);
-            Array tmpa = tmpv;
-
-            return tmpa;
+            return scalarAdd(x);
         }
 
         Array operator-(T x) const {
-            std::vector<T> tmpv = scalarSubtractVector(x, arr);
-            Array tmpa = tmpv;
-
-            return tmpa;
+            return scalarSubtract(x);
         }
 
         Array operator-=(T x) const {
-            std::vector<T> tmpv = scalarSubtractVector(x, arr);
-            Array tmpa = tmpv;
-
-            return tmpa;
+            return scalarSubtract(x);
         }
 
         Array operator*(T x) const {
-            std::vector<T> tmpv = scalarMultiplyVector(x, arr);
-            Array tmpa = tmpv;
-
-            return tmpa;
+            return scalarMultiply(x);
         }
 
         Array operator*=(T x) const {
-            std::vector<T> tmpv = scalarMultiplyVector(x, arr);
-            Array tmpa = tmpv;
-
-            return tmpa;
+            return scalarMultiply(x);
         }
 
         Array operator+(Array vec) const {
-            std::vector<T> tmpv = addVectorVector(arr, vec.arr);
-            Array tmpa = tmpv;
-            
-            return tmpa;
+            return addArray(vec);
         }
 
         Array operator+=(Array vec) const {
-            std::vector<T> tmpv = addVectorVector(arr, vec.arr);
-            Array tmpa = tmpv;
-            
-            return tmpa;
+            return addArray(vec);
         }
 
         Array operator-(Array vec) const {
-            std::vector<T> tmpv = subtractVectorVector(arr, vec.arr);
-            Array tmpa = tmpv;
-            
-            return tmpa;
+            return subtractArray(vec);
         }
 
         Array operator-=(Array vec) const {
-            std::vector<T> tmpv = subtractVectorVector(arr, vec.arr);
-            Array tmpa = tmpv;
-            
-            return tmpa;
+            return subtractArray(vec);
         }
 
         Array operator*(Array vec) const {
-            std::vector<T> tmpv = multiplyVectorVector(arr, vec.arr);
-            Array tmpa = tmpv;
-            
-            return tmpa;
+            return multiplyArray(vec);
         }
 
         Array operator*=(Array vec) const {
-            std::vector<T> tmpv = multiplyVectorVector(arr, vec.arr);
-            Array tmpa = tmpv;
-            
-            return tmpa;
+            return multiplyArray(vec);
         }
 
         std::string toString() {
@@ -300,6 +323,12 @@ PYBIND11_MODULE(example, m) {
 
     pybind11::class_<Array<int>>(m, "Array")
         .def(pybind11::init<std::vector<int>>())
+        .def("scalarAdd", &Array<int>::scalarAdd)
+        .def("scalarSubtract", &Array<int>::scalarSubtract)
+        .def("scalarMultiply", &Array<int>::scalarMultiply)
+        .def("addArray", &Array<int>::addArray)
+        .def("subtractArray", &Array<int>::subtractArray)
+        .def("multiplyArray", &Array<int>::multiplyArray)
         .def("__getitem__", &Array<int>::operator[])
         .def("__setitem__", &Array<int>::__setitem__)
         .def(pybind11::self + int())
