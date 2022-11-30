@@ -252,7 +252,7 @@ class Matrix {
         }
 
         Matrix multiplyMatrix(Matrix const &m1) const {
-            Matrix tmp_mat = Matrix(mat.size(), m1[0].size(), 0);
+            Matrix tmp_mat = Matrix(mat.size(), m1.mat[0].size(), 0);
             for (size_t mat_row = 0; mat_row < mat.size(); mat_row++) {
                 if (mat[mat_row].size() != m1.mat.size()) {
                     throw std::invalid_argument("Columns in each row of matrix #1 must equal length number of rows in matrix #2!");
@@ -275,7 +275,7 @@ class Matrix {
             Matrix tmp_mat = Matrix(mat.size(), mat[0].size(), 0);
             for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
                 for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
-                    tmp_mat.mat[i][j] *= x;
+                    tmp_mat.mat[i][j] = mat[i][j] * x;
                 }
             }
             return tmp_mat;
@@ -285,7 +285,7 @@ class Matrix {
             Matrix tmp_mat = Matrix(mat.size(), mat[0].size(), 0);
             for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
                 for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
-                    tmp_mat.mat[i][j] += x;
+                    tmp_mat.mat[i][j] = mat[i][j] + x;
                 }
             }
             return tmp_mat;
@@ -295,7 +295,7 @@ class Matrix {
             Matrix tmp_mat = Matrix(mat.size(), mat[0].size(), 0);
             for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
                 for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
-                    tmp_mat.mat[i][j] -= x;
+                    tmp_mat.mat[i][j] = mat[i][j] - x;
                 }
             }
             return tmp_mat;
@@ -318,19 +318,29 @@ class Matrix {
         // }
 
         //__getitem__
-        std::vector<T> operator[](int i) const {
+        T getItem(int i, int j) {
+            return mat[i][j];
+        }
+        std::vector<T> getArray(int i) {
             return mat[i];
         }
-
-        // set individual element
-        // void __setitem__(int i, int j, T x) {
-        //     mat[i][j] = x;
-        // }
-
+        
+        //set single element
+        void setItem(int i, int j, T x) {
+            mat[i][j] = x;
+        }
         //set entire row
-        void __setitem__(int i, std::vector<T> x) {
+        void setArray(int i, std::vector<T> x) {
+            if (x.size() != mat[i].size()) {
+                throw std::invalid_argument("Array size does not match matrix dimensions!");
+            }
+            size_t j = i;
+            if (i < -1 or j > mat.size() - 1) {
+                throw std::invalid_argument("Index out of bounds!");
+            }
             mat[i] = x;
         }
+        
 
         // Matrix scalar operations
         Matrix operator+(T a) const {
@@ -553,8 +563,11 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::init<std::vector<std::vector<int>>>())
         .def(pybind11::init<int, int, int>())
         .def(pybind11::init<int, int>())
-        .def("__setitem__", &Matrix<int>::__setitem__)
-        .def("__getitem__", &Matrix<int>::operator[])
+        .def("getItem", &Matrix<int>::getItem)
+        .def("getArray", &Matrix<int>::getArray)
+        .def("setItem", &Matrix<int>::setItem)
+        .def("setArray", &Matrix<int>::setArray)
+        // .def("get", &Matrix<int>::get)
         .def("toString", &Matrix<int>::toString)
         .def("addMatrix", &Matrix<int>::addMatrix)
         .def("subtractMatrix", &Matrix<int>::subtractMatrix)
