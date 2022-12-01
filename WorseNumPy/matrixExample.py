@@ -57,3 +57,9 @@ print(a.getItem(0, 0))
 a.setArray(0, [1, 3, 4, 5, 6])
 print(a.toString())
 print(a.getArray(0))
+
+a = WorseNumPy.Matrix([[7, -2, 2, 2], 
+                       [2, 8, -2, 3], 
+                       [-3, 2, 11, -4], 
+                       [-2, 3, 2, 10]])
+print(a.L1Norm())

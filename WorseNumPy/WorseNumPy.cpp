@@ -193,7 +193,9 @@ template <typename T>
 class Matrix {
     public:
         // NOTE: crashes when n = 0
-        Matrix(int rows, int cols, T value = 0) {
+        Matrix(int rowSize, int colSize, T value = 0) {
+            rows = rowSize;
+            cols = colSize;
             std::vector<std::vector<T>> tmp;
             std::vector<T> subVec = {};
             for (int i = 0; i < rows; i++) {
@@ -206,6 +208,13 @@ class Matrix {
         }
 
         Matrix(std::vector<std::vector<T>> mat_b) {
+            rows = mat_b.size();
+            if (mat_b.size() > 0) {
+                cols = mat_b[0].size();
+            }
+            else {
+                cols = 0;
+            }
             mat = mat_b;
         }
 
@@ -387,8 +396,29 @@ class Matrix {
         }
 
         // Matrix Vector Opertations
+
+        T L1Norm() {
+            T maxNorm = 0;
+            for (int col = 0; col < cols; col++) {
+                T curNorm = 0;
+                for (int row = 0; row < rows; row++) {
+                    curNorm += abs(mat[row][col]);
+                }
+                if (curNorm > maxNorm) {
+                    maxNorm = curNorm;
+                }
+            }
+            return maxNorm;
+        }
+
+        T L2Norm() {
+            
+        }
+
     private:
         std::vector<std::vector<T>> mat;
+        int cols;
+        int rows;
         std::string rowToString(std::vector<T> &row) {
             std::string msg = "[";
 
@@ -550,16 +580,29 @@ class Array {
             return msg;
         }
 
-        float calcL1Norm(Array a) {
+        // T calcL1Norm(Array vec) {
+        //     T acc = 0;
+        //     for (T element : vec.arr) {
+        //         acc += abs(element);
+        //     }
+        //     return acc;
+        // }
+
+        T L1Norm() {
             T acc = 0;
-            for (T element : a.arr) {
+            for (T element : arr) {
                 acc += abs(element);
             }
             return acc;
         }
 
-        T L1Norm() {
-            return calcL1Norm(this)
+        float L2Norm() {
+            T acc = 0;
+            for (T element : arr) {
+                acc += pow(element, 2);
+            }
+            float ans = sqrt(acc);
+            return ans;
         }
 
     private:
@@ -598,7 +641,9 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self - pybind11::self)
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
-        .def(pybind11::self *= pybind11::self);
+        .def(pybind11::self *= pybind11::self)
+        .def("L1Norm", &Matrix<int>::L1Norm)
+        .def("L2Norm", &Matrix<int>::L2Norm);
         
     pybind11::class_<Array<int>>(m, "Array")
         .def(pybind11::init<std::vector<int>>())
@@ -625,8 +670,9 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self * pybind11::self)
         .def(pybind11::self *= pybind11::self)
         .def("toString", &Array<int>::toString)
-        .def("calcL1Norm", &Array<int>::calcL1Norm)
-        .def("L1Norm", &Array<int>::L1Norm);
+        // .def("calcL1Norm", &Array<int>::calcL1Norm)
+        .def("L1Norm", &Array<int>::L1Norm)
+        .def("L2Norm", &Array<int>::L2Norm);
 
     m.def("setProcessors", &setProcessors, "A function that sets the number of processors for the library");
     m.def("getProcessors", &getProcessors, "A function that returns the number of processors set for the library");

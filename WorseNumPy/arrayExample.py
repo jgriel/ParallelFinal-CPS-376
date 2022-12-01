@@ -68,3 +68,13 @@ a = WorseNumPy.Array([1, 2, 3])
 print(a.L1Norm())
 a = WorseNumPy.Array([1, -2, 3])
 print(a.L1Norm())
+
+a = WorseNumPy.Array([1, 2, 3])
+print(a.L2Norm())
+a = WorseNumPy.Array([1, -2, 3])
+print(a.L2Norm())
+
+# a = WorseNumPy.Array([1, 2, 3])
+# print(a.calcL1Norm(a))
+# a = a = WorseNumPy.Array([1, -2, 3])
+# print(WorseNumPy.Array.calcL1Norm(a))
