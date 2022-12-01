@@ -411,8 +411,33 @@ class Matrix {
             return maxNorm;
         }
 
-        T L2Norm() {
-            
+        std::vector<float> norm(int normType) {
+            std::vector<float> normVec = {};
+            // L1
+            if (normType == 1) {
+                for (int col = 0; col < cols; col++) {
+                    T curNorm = 0;
+                    for (int row = 0; row < rows; row++) {
+                        curNorm += abs(mat[row][col]);
+                    }
+                    normVec.push_back(curNorm);
+                }
+            }
+            // L2
+            else if (normType == 2) {
+                for (int col = 0; col < cols; col++) {
+                    T acc = 0;
+                    for (int row = 0; row < rows; row++) {
+                        acc += pow(mat[row][col], 2);
+                    }
+                    normVec.push_back(sqrt(acc));
+                }
+            }
+            else {
+                throw std::invalid_argument("Norm type must be 1 (L1Norm) or 2 (L2Norm)!");
+            }
+
+            return normVec;
         }
 
     private:
@@ -643,7 +668,7 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self * pybind11::self)
         .def(pybind11::self *= pybind11::self)
         .def("L1Norm", &Matrix<int>::L1Norm)
-        .def("L2Norm", &Matrix<int>::L2Norm);
+        .def("norm", &Matrix<int>::norm);
         
     pybind11::class_<Array<int>>(m, "Array")
         .def(pybind11::init<std::vector<int>>())

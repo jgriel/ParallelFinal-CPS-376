@@ -63,3 +63,5 @@ a = WorseNumPy.Matrix([[7, -2, 2, 2],
                        [-3, 2, 11, -4], 
                        [-2, 3, 2, 10]])
 print(a.L1Norm())
+print(a.norm(1))
+print(a.norm(2))
