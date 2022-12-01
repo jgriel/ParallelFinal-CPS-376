@@ -63,3 +63,8 @@ z = WorseNumPy.Array(5)
 print(z.toString())
 z = WorseNumPy.Array(5, 7)
 print(z.toString() + "\n")
+
+a = WorseNumPy.Array([1, 2, 3])
+print(a.L1Norm())
+a = WorseNumPy.Array([1, -2, 3])
+print(a.L1Norm())

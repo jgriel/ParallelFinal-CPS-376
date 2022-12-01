@@ -550,6 +550,18 @@ class Array {
             return msg;
         }
 
+        float calcL1Norm(Array a) {
+            T acc = 0;
+            for (T element : a.arr) {
+                acc += abs(element);
+            }
+            return acc;
+        }
+
+        T L1Norm() {
+            return calcL1Norm(this)
+        }
+
     private:
         std::vector<T> arr;
       
@@ -612,15 +624,9 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
         .def(pybind11::self *= pybind11::self)
-        .def("toString", &Array<int>::toString);
-
-    // pybind11::class_<Array<double>>(m, "Array")
-    //     .def(pybind11::init<std::vector<double>>())
-    //     .def(pybind11::self + double());
-
-    // pybind11::class_<Array<float>>(m, "Array")
-    //     .def(pybind11::init<std::vector<float>>())
-    //     .def(pybind11::self + float());
+        .def("toString", &Array<int>::toString)
+        .def("calcL1Norm", &Array<int>::calcL1Norm)
+        .def("L1Norm", &Array<int>::L1Norm);
 
     m.def("setProcessors", &setProcessors, "A function that sets the number of processors for the library");
     m.def("getProcessors", &getProcessors, "A function that returns the number of processors set for the library");
