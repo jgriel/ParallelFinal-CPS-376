@@ -63,3 +63,6 @@ z = WorseNumPy.ArrayInt(5)
 print(z.toString())
 z = WorseNumPy.ArrayInt(5, 7)
 print(z.toString() + "\n")
+
+z = WorseNumPy.ArrayFloat(5, 7)
+print(z.toString() + "\n")
