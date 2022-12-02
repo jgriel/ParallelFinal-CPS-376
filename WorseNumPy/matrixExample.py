@@ -12,16 +12,23 @@ c = b + 1
 print(c.toString())
 c = c.scalarAdd(1)
 print(c.toString())
+c += 1
+print(c.toString())
 
 c = b - 1
 print(c.toString())
 c = c.scalarSubtract(1)
+print(c.toString())
+c -= 1
 print(c.toString())
 
 c = b * 3
 print(c.toString())
 c = c.scalarMultiply(3)
 print(c.toString())
+print(b.toString())
+b *= 3
+print("here", b.toString())
 
 a = WorseNumPy.Matrix([[2, 3], [4, 23]])
 b = WorseNumPy.Matrix([[1, 9], [13, 7]])
@@ -29,6 +36,9 @@ c = a + b
 print(c.toString())
 c = a.addMatrix(b)
 print(c.toString())
+print(a.toString())
+a += b
+print(a.toString())
 
 c = a.multiplyMatrix(b)
 print(c.toString())
@@ -41,6 +51,8 @@ c = a - b
 print(c.toString())
 c = a.subtractMatrix(b)
 print(c.toString())
+a -= b
+print(a.toString())
 
 c = a * b
 print(c.toString())
@@ -62,6 +74,6 @@ a = WorseNumPy.Matrix([[7, -2, 2, 2],
                        [2, 8, -2, 3], 
                        [-3, 2, 11, -4], 
                        [-2, 3, 2, 10]])
+# print(a.L1Norm())
 print(a.L1Norm())
-print(a.norm(1))
-print(a.norm(2))
+print(a.L2Norm())
