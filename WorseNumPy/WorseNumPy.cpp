@@ -302,19 +302,18 @@ class Matrix {
         }
 
         // Matrix multiplyVectorMatrix(Array arr) {
-            // std::vector<std::vector<int>> mat_b = {};
-            // for (size_t i = 0; i < mat.size(); i++) {
-            //     if (arr.size() != mat[i].size()) {
-            //         throw std::invalid_argument("Length of all rows in the matrix must == legnth of the vector!");
-            //     }
+        //     Matrix mat_b = Matrix(0, 0);
+        //     for (size_t i = 0; i < mat.size(); i++) {
+        //         if (arr.size() != mat[i].size()) {
+        //             throw std::invalid_argument("Length of all rows in the matrix must == length of the vector!");
+        //         }
 
-            //     mat_b.push_back({});
-            //     for (size_t j = 0; j < mat[i].size(); j++) {
-            //         mat_b[i].push_back(arr[j] * mat[i][j]);
-            //     }
-            // }
-        //     Matrix tmp = Matrix(0,0,0);
-        //     return tmp;
+        //         mat_b.mat.push_back({});
+        //         for (size_t j = 0; j < mat[i].size(); j++) {
+        //             mat_b.mat[i].push_back(arr[j] * mat[i][j]);
+        //         }
+        //     }
+        //     return mat_b;
         // }
 
         //__getitem__
@@ -559,7 +558,7 @@ class Array {
 PYBIND11_MODULE(WorseNumPy, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
 
-    pybind11::class_<Matrix<int>>(m, "Matrix")
+    pybind11::class_<Matrix<int>>(m, "MatrixInt")
         .def(pybind11::init<std::vector<std::vector<int>>>())
         .def(pybind11::init<int, int, int>())
         .def(pybind11::init<int, int>())
@@ -567,7 +566,6 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def("getArray", &Matrix<int>::getArray)
         .def("setItem", &Matrix<int>::setItem)
         .def("setArray", &Matrix<int>::setArray)
-        // .def("get", &Matrix<int>::get)
         .def("toString", &Matrix<int>::toString)
         .def("addMatrix", &Matrix<int>::addMatrix)
         .def("subtractMatrix", &Matrix<int>::subtractMatrix)
@@ -575,6 +573,7 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def("scalarMultiply", &Matrix<int>::scalarMultiply)
         .def("scalarAdd", &Matrix<int>::scalarAdd)
         .def("scalarSubtract", &Matrix<int>::scalarSubtract)
+        // .def("multiplyVectorMatrix", &Matrix<int>::multiplyVectorMatrix)
         .def(pybind11::self + int())
         .def(pybind11::self += int())
         .def(pybind11::self - int())
@@ -587,8 +586,66 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
         .def(pybind11::self *= pybind11::self);
-        
-    pybind11::class_<Array<int>>(m, "Array")
+
+    pybind11::class_<Matrix<float>>(m, "MatrixFloat")
+        .def(pybind11::init<std::vector<std::vector<float>>>())
+        .def(pybind11::init<float, float, float>())
+        .def(pybind11::init<float, float>())
+        .def("getItem", &Matrix<float>::getItem)
+        .def("getArray", &Matrix<float>::getArray)
+        .def("setItem", &Matrix<float>::setItem)
+        .def("setArray", &Matrix<float>::setArray)
+        .def("toString", &Matrix<float>::toString)
+        .def("addMatrix", &Matrix<float>::addMatrix)
+        .def("subtractMatrix", &Matrix<float>::subtractMatrix)
+        .def("multiplyMatrix", &Matrix<float>::multiplyMatrix)
+        .def("scalarMultiply", &Matrix<float>::scalarMultiply)
+        .def("scalarAdd", &Matrix<float>::scalarAdd)
+        .def("scalarSubtract", &Matrix<float>::scalarSubtract)
+        // .def("multiplyVectorMatrix", &Matrix<int>::multiplyVectorMatrix)
+        .def(pybind11::self + float())
+        .def(pybind11::self += float())
+        .def(pybind11::self - float())
+        .def(pybind11::self -= float())
+        .def(pybind11::self * float())
+        .def(pybind11::self *= float())
+        .def(pybind11::self + pybind11::self)
+        .def(pybind11::self += pybind11::self)
+        .def(pybind11::self - pybind11::self)
+        .def(pybind11::self -= pybind11::self)
+        .def(pybind11::self * pybind11::self)
+        .def(pybind11::self *= pybind11::self);
+
+    pybind11::class_<Matrix<double>>(m, "MatrixDouble")
+        .def(pybind11::init<std::vector<std::vector<double>>>())
+        .def(pybind11::init<double, double, double>())
+        .def(pybind11::init<double, double>())
+        .def("getItem", &Matrix<double>::getItem)
+        .def("getArray", &Matrix<double>::getArray)
+        .def("setItem", &Matrix<double>::setItem)
+        .def("setArray", &Matrix<double>::setArray)
+        .def("toString", &Matrix<double>::toString)
+        .def("addMatrix", &Matrix<double>::addMatrix)
+        .def("subtractMatrix", &Matrix<double>::subtractMatrix)
+        .def("multiplyMatrix", &Matrix<double>::multiplyMatrix)
+        .def("scalarMultiply", &Matrix<double>::scalarMultiply)
+        .def("scalarAdd", &Matrix<double>::scalarAdd)
+        .def("scalarSubtract", &Matrix<double>::scalarSubtract)
+        // .def("multiplyVectorMatrix", &Matrix<int>::multiplyVectorMatrix)
+        .def(pybind11::self + double())
+        .def(pybind11::self += double())
+        .def(pybind11::self - double())
+        .def(pybind11::self -= double())
+        .def(pybind11::self * double())
+        .def(pybind11::self *= double())
+        .def(pybind11::self + pybind11::self)
+        .def(pybind11::self += pybind11::self)
+        .def(pybind11::self - pybind11::self)
+        .def(pybind11::self -= pybind11::self)
+        .def(pybind11::self * pybind11::self)
+        .def(pybind11::self *= pybind11::self);
+
+    pybind11::class_<Array<int>>(m, "ArrayInt")
         .def(pybind11::init<std::vector<int>>())
         .def(pybind11::init<int, int>())
         .def(pybind11::init<int>())
@@ -614,13 +671,58 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self *= pybind11::self)
         .def("toString", &Array<int>::toString);
 
-    // pybind11::class_<Array<double>>(m, "Array")
-    //     .def(pybind11::init<std::vector<double>>())
-    //     .def(pybind11::self + double());
+    pybind11::class_<Array<float>>(m, "ArrayFloat")
+        .def(pybind11::init<std::vector<float>>())
+        .def(pybind11::init<float, float>())
+        .def(pybind11::init<float>())
+        .def("scalarAdd", &Array<float>::scalarAdd)
+        .def("scalarSubtract", &Array<float>::scalarSubtract)
+        .def("scalarMultiply", &Array<float>::scalarMultiply)
+        .def("addArray", &Array<float>::addArray)
+        .def("subtractArray", &Array<float>::subtractArray)
+        .def("multiplyArray", &Array<float>::multiplyArray)
+        .def("__getitem__", &Array<float>::operator[])
+        .def("__setitem__", &Array<float>::__setitem__)
+        .def(pybind11::self + float())
+        .def(pybind11::self += float())
+        .def(pybind11::self - float())
+        .def(pybind11::self -= float())
+        .def(pybind11::self * float())
+        .def(pybind11::self *= float())
+        .def(pybind11::self + pybind11::self)
+        .def(pybind11::self += pybind11::self)
+        .def(pybind11::self - pybind11::self)
+        .def(pybind11::self -= pybind11::self)
+        .def(pybind11::self * pybind11::self)
+        .def(pybind11::self *= pybind11::self)
+        .def("toString", &Array<float>::toString);
 
-    // pybind11::class_<Array<float>>(m, "Array")
-    //     .def(pybind11::init<std::vector<float>>())
-    //     .def(pybind11::self + float());
+    pybind11::class_<Array<double>>(m, "ArrayDouble")
+        .def(pybind11::init<std::vector<double>>())
+        .def(pybind11::init<double, double>())
+        .def(pybind11::init<double>())
+        .def("scalarAdd", &Array<double>::scalarAdd)
+        .def("scalarSubtract", &Array<double>::scalarSubtract)
+        .def("scalarMultiply", &Array<double>::scalarMultiply)
+        .def("addArray", &Array<double>::addArray)
+        .def("subtractArray", &Array<double>::subtractArray)
+        .def("multiplyArray", &Array<double>::multiplyArray)
+        .def("__getitem__", &Array<double>::operator[])
+        .def("__setitem__", &Array<double>::__setitem__)
+        .def(pybind11::self + double())
+        .def(pybind11::self += double())
+        .def(pybind11::self - double())
+        .def(pybind11::self -= double())
+        .def(pybind11::self * double())
+        .def(pybind11::self *= double())
+        .def(pybind11::self + pybind11::self)
+        .def(pybind11::self += pybind11::self)
+        .def(pybind11::self - pybind11::self)
+        .def(pybind11::self -= pybind11::self)
+        .def(pybind11::self * pybind11::self)
+        .def(pybind11::self *= pybind11::self)
+        .def("toString", &Array<double>::toString);
+
 
     m.def("setProcessors", &setProcessors, "A function that sets the number of processors for the library");
     m.def("getProcessors", &getProcessors, "A function that returns the number of processors set for the library");
