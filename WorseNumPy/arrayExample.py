@@ -66,3 +66,13 @@ print(z.toString() + "\n")
 
 z = WorseNumPy.ArrayFloat(5, 7)
 print(z.toString() + "\n")
+
+a = WorseNumPy.ArrayInt([1, 2, 3])
+print(a.L1Norm())
+a = WorseNumPy.ArrayInt([1, -2, 3])
+print(a.L1Norm())
+
+a = WorseNumPy.ArrayInt([1, 2, 3])
+print(a.L2Norm())
+a = WorseNumPy.ArrayInt([1, -2, 3])
+print(a.L2Norm())

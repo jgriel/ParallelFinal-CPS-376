@@ -12,16 +12,23 @@ c = b + 1
 print(c.toString())
 c = c.scalarAdd(1)
 print(c.toString())
+c += 1
+print(c.toString())
 
 c = b - 1
 print(c.toString())
 c = c.scalarSubtract(1)
+print(c.toString())
+c -= 1
 print(c.toString())
 
 c = b * 3
 print(c.toString())
 c = c.scalarMultiply(3)
 print(c.toString())
+print(b.toString())
+b *= 3
+print(b.toString())
 
 a = WorseNumPy.MatrixInt([[2, 3], [4, 23]])
 b = WorseNumPy.MatrixInt([[1, 9], [13, 7]])
@@ -29,6 +36,9 @@ c = a + b
 print(c.toString())
 c = a.addMatrix(b)
 print(c.toString())
+print(a.toString())
+a += b
+print(a.toString())
 
 c = a.multiplyMatrix(b)
 print(c.toString())
@@ -41,6 +51,9 @@ c = a - b
 print(c.toString())
 c = a.subtractMatrix(b)
 print(c.toString())
+print(a.toString(), b.toString())
+a -= b
+print(a.toString())
 
 c = a * b
 print(c.toString())
@@ -57,6 +70,13 @@ print(a.getItem(0, 0))
 a.setArray(0, [1, 3, 4, 5, 6])
 print(a.toString())
 print(a.getArray(0))
+
+a = WorseNumPy.MatrixDouble([[7, -2, 2, 2], 
+                       [2, 8, -2, 3], 
+                       [-3, 2, 11, -4], 
+                       [-2, 3, 2, 10]])
+print(a.L1Norm())
+print(a.L2Norm())
 
 a = WorseNumPy.MatrixFloat(5, 5, 1)
 print(a.toString())

@@ -193,7 +193,9 @@ template <typename T>
 class Matrix {
     public:
         // NOTE: crashes when n = 0
-        Matrix(int rows, int cols, T value = 0) {
+        Matrix(int rowSize, int colSize, T value = 0) {
+            rows = rowSize;
+            cols = colSize;
             std::vector<std::vector<T>> tmp;
             std::vector<T> subVec = {};
             for (int i = 0; i < rows; i++) {
@@ -206,6 +208,13 @@ class Matrix {
         }
 
         Matrix(std::vector<std::vector<T>> mat_b) {
+            rows = mat_b.size();
+            if (mat_b.size() > 0) {
+                cols = mat_b[0].size();
+            }
+            else {
+                cols = 0;
+            }
             mat = mat_b;
         }
 
@@ -255,7 +264,7 @@ class Matrix {
             Matrix tmp_mat = Matrix(mat.size(), m1.mat[0].size(), 0);
             for (size_t mat_row = 0; mat_row < mat.size(); mat_row++) {
                 if (mat[mat_row].size() != m1.mat.size()) {
-                    throw std::invalid_argument("Columns in each row of matrix #1 must equal length number of rows in matrix #2!");
+                    throw std::invalid_argument("Columns in each row of matrix #1 must equal length of the number of rows in matrix #2!");
                 }
                 for (size_t m1_col = 0; m1_col < m1.mat[0].size(); m1_col++) {
                     int acc = 0;
@@ -345,37 +354,68 @@ class Matrix {
         Matrix operator+(T a) const {
             return scalarAdd(a);
         }
-        Matrix operator+=(T a) const {
-            return scalarAdd(a);
+        Matrix operator+=(T a) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    mat[i][j] = mat[i][j] + a;
+                }
+            }
+            return *this;
         }
 
         Matrix operator-(T a) const {
             return scalarSubtract(a);
         }
-        Matrix operator-=(T a) const {
-            return scalarSubtract(a);
+        Matrix operator-=(T a) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    mat[i][j] = mat[i][j] - a;
+                }
+            }
+            return *this;
         }
 
         Matrix operator*(T a) const {
             return scalarMultiply(a);
         }
-        Matrix operator*=(T a) const {
-            return scalarMultiply(a);
+        Matrix operator*=(T a) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    mat[i][j] = mat[i][j] * a;
+                }
+            }
+            return *this;
         }
 
         // Matrix Matrix operations
         Matrix operator+(Matrix const &mat_b) const {
             return addMatrix(mat_b);
         }
-        Matrix operator+=(Matrix const &mat_b) const {
-            return addMatrix(mat_b);
+        Matrix operator+=(Matrix const &mat_b) {
+            if (rows != mat_b.rows) {
+                    throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+            }
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    mat[i][j] = mat[i][j] + mat_b.mat[i][j];
+                }
+            }
+            return *this;
         }
 
         Matrix operator-(Matrix const &mat_b) const {
             return subtractMatrix(mat_b);
         }
-        Matrix operator-=(Matrix const &mat_b) const {
-            return subtractMatrix(mat_b);
+        Matrix operator-=(Matrix const &mat_b) {
+            if (rows != mat_b.rows) {
+                    throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+            }
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    mat[i][j] = mat[i][j] - mat_b.mat[i][j];
+                }
+            }
+            return *this;
         }
 
         Matrix operator*(Matrix const &mat_b) const {
@@ -386,8 +426,81 @@ class Matrix {
         }
 
         // Matrix Vector Opertations
+
+        std::vector<T> L1Norm() {
+            std::vector<T> normVec = {};
+            for (int col = 0; col < cols; col++) {
+                T curNorm = 0;
+                for (int row = 0; row < rows; row++) {
+                    curNorm += abs(mat[row][col]);
+                }
+                normVec.push_back(curNorm);
+            }
+            return normVec;
+        }
+
+        std::vector<float> L2Norm() {
+            std::vector<float> normVec = {};
+            for (int col = 0; col < cols; col++) {
+                T acc = 0;
+                for (int row = 0; row < rows; row++) {
+                    acc += pow(mat[row][col], 2);
+                }
+                normVec.push_back(sqrt(acc));
+            }
+            return normVec;
+        }
+
+        // Can probably delete but need to confirm with McDanel if the above norm methods are what he wants.
+
+        // T L1Norm() {
+        //     T maxNorm = 0;
+        //     for (int col = 0; col < cols; col++) {
+        //         T curNorm = 0;
+        //         for (int row = 0; row < rows; row++) {
+        //             curNorm += abs(mat[row][col]);
+        //         }
+        //         if (curNorm > maxNorm) {
+        //             maxNorm = curNorm;
+        //         }
+        //     }
+        //     return maxNorm;
+        // }
+
+
+        // std::vector<float> norm(int normType) {
+        //     std::vector<float> normVec = {};
+        //     // L1
+        //     if (normType == 1) {
+        //         for (int col = 0; col < cols; col++) {
+        //             T curNorm = 0;
+        //             for (int row = 0; row < rows; row++) {
+        //                 curNorm += abs(mat[row][col]);
+        //             }
+        //             normVec.push_back(curNorm);
+        //         }
+        //     }
+        //     // L2
+        //     else if (normType == 2) {
+        //         for (int col = 0; col < cols; col++) {
+        //             T acc = 0;
+        //             for (int row = 0; row < rows; row++) {
+        //                 acc += pow(mat[row][col], 2);
+        //             }
+        //             normVec.push_back(sqrt(acc));
+        //         }
+        //     }
+        //     else {
+        //         throw std::invalid_argument("Norm type must be 1 (L1Norm) or 2 (L2Norm)!");
+        //     }
+
+        //     return normVec;
+        // }
+
     private:
         std::vector<std::vector<T>> mat;
+        int rows;
+        int cols;
         std::string rowToString(std::vector<T> &row) {
             std::string msg = "[";
 
@@ -549,6 +662,23 @@ class Array {
             return msg;
         }
 
+        T L1Norm() {
+            T acc = 0;
+            for (T element : arr) {
+                acc += abs(element);
+            }
+            return acc;
+        }
+
+        float L2Norm() {
+            T acc = 0;
+            for (T element : arr) {
+                acc += pow(element, 2);
+            }
+            float ans = sqrt(acc);
+            return ans;
+        }
+
     private:
         std::vector<T> arr;
       
@@ -585,7 +715,9 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self - pybind11::self)
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
-        .def(pybind11::self *= pybind11::self);
+        .def(pybind11::self *= pybind11::self)
+        .def("L1Norm", &Matrix<int>::L1Norm)
+        .def("L2Norm", &Matrix<int>::L2Norm);
 
     pybind11::class_<Matrix<float>>(m, "MatrixFloat")
         .def(pybind11::init<std::vector<std::vector<float>>>())
@@ -614,7 +746,9 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self - pybind11::self)
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
-        .def(pybind11::self *= pybind11::self);
+        .def(pybind11::self *= pybind11::self)
+        .def("L1Norm", &Matrix<float>::L1Norm)
+        .def("L2Norm", &Matrix<float>::L2Norm);
 
     pybind11::class_<Matrix<double>>(m, "MatrixDouble")
         .def(pybind11::init<std::vector<std::vector<double>>>())
@@ -643,7 +777,9 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self - pybind11::self)
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
-        .def(pybind11::self *= pybind11::self);
+        .def(pybind11::self *= pybind11::self)
+        .def("L1Norm", &Matrix<double>::L1Norm)
+        .def("L2Norm", &Matrix<double>::L2Norm);;
 
     pybind11::class_<Array<int>>(m, "ArrayInt")
         .def(pybind11::init<std::vector<int>>())
@@ -669,7 +805,9 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
         .def(pybind11::self *= pybind11::self)
-        .def("toString", &Array<int>::toString);
+        .def("toString", &Array<int>::toString)
+        .def("L1Norm", &Array<int>::L1Norm)
+        .def("L2Norm", &Array<int>::L2Norm);
 
     pybind11::class_<Array<float>>(m, "ArrayFloat")
         .def(pybind11::init<std::vector<float>>())
@@ -695,7 +833,9 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
         .def(pybind11::self *= pybind11::self)
-        .def("toString", &Array<float>::toString);
+        .def("toString", &Array<float>::toString)
+        .def("L1Norm", &Array<float>::L1Norm)
+        .def("L2Norm", &Array<float>::L2Norm);
 
     pybind11::class_<Array<double>>(m, "ArrayDouble")
         .def(pybind11::init<std::vector<double>>())
@@ -721,7 +861,9 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
         .def(pybind11::self *= pybind11::self)
-        .def("toString", &Array<double>::toString);
+        .def("toString", &Array<double>::toString)
+        .def("L1Norm", &Array<double>::L1Norm)
+        .def("L2Norm", &Array<double>::L2Norm);
 
 
     m.def("setProcessors", &setProcessors, "A function that sets the number of processors for the library");
