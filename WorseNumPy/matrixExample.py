@@ -83,20 +83,20 @@ a = WorseNumPy.MatrixFloat(5, 5, 1)
 print(a)
 
 print("\nPARALLELIZATION TESTING")
-a = WorseNumPy.MatrixDouble([[99999999999999999999999999999999999999999999999999, 99999999999999999999999999999999999999999999999999], [99999999999999999999999999999999999999999999999999, 99999999999999999999999999999999999999999999999999]])
-b = 99999999999
+a = WorseNumPy.MatrixDouble(999, 999, 2)
+b = WorseNumPy.MatrixDouble(999, 999, 3)
+WorseNumPy.setProcessors(1)
 
-start = time.time()   
-for i in range(5000000):
-    a*=b
+start = time.time()  
+a*b
 runtime = time.time() - start
 print(runtime, "seconds")
 
-a = WorseNumPy.MatrixDouble([[99999999999999999999999999999999999999999999999999, 99999999999999999999999999999999999999999999999999], [99999999999999999999999999999999999999999999999999, 99999999999999999999999999999999999999999999999999]])
-b = 99999999999
-WorseNumPy.setProcessors(4)
+a = WorseNumPy.MatrixDouble(999, 999, 2)
+b = WorseNumPy.MatrixDouble(999, 999, 3)
+WorseNumPy.setProcessors(32)
+
 start = time.time()
-for i in range(5000000):
-    a*=b
+a*b
 runtime = time.time() - start
 print(runtime, "seconds")

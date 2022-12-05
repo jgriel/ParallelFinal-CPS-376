@@ -264,21 +264,22 @@ class Matrix {
 
         Matrix multiplyMatrix(Matrix const &m1) const {
             Matrix tmp_mat = Matrix(mat.size(), m1.mat[0].size(), 0);
-            for (size_t mat_row = 0; mat_row < mat.size(); mat_row++) {
-                if (mat[mat_row].size() != m1.mat.size()) {
-                    throw std::invalid_argument("Columns in each row of matrix #1 must equal length of the number of rows in matrix #2!");
-                }
-                for (size_t m1_col = 0; m1_col < m1.mat[0].size(); m1_col++) {
-                    int acc = 0;
-                    for (size_t idx = 0; idx < mat[mat_row].size(); idx++) {
-                        if (mat.size() != m1.mat[idx].size()) {
-                            throw std::invalid_argument("Length of each column in matrix #1 must equal length of each row in matrix #2!");
-                        }
-                        acc += mat[mat_row][idx] * m1.mat[idx][m1_col];
+            #pragma omp parallel for
+                for (size_t mat_row = 0; mat_row < mat.size(); mat_row++) {
+                    if (mat[mat_row].size() != m1.mat.size()) {
+                        throw std::invalid_argument("Columns in each row of matrix #1 must equal length of the number of rows in matrix #2!");
                     }
-                    tmp_mat.mat[mat_row][m1_col] = acc;
+                    for (size_t m1_col = 0; m1_col < m1.mat[0].size(); m1_col++) {
+                        int acc = 0;
+                        for (size_t idx = 0; idx < mat[mat_row].size(); idx++) {
+                            if (mat.size() != m1.mat[idx].size()) {
+                                throw std::invalid_argument("Length of each column in matrix #1 must equal length of each row in matrix #2!");
+                            }
+                            acc += mat[mat_row][idx] * m1.mat[idx][m1_col];
+                        }
+                        tmp_mat.mat[mat_row][m1_col] = acc;
+                    }
                 }
-            }
             return tmp_mat;
         }
 
