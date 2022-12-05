@@ -1,5 +1,6 @@
 import WorseNumPy
 import numpy
+import time 
 
 # CLASS FUNCTIONS
 print(WorseNumPy.addInt(1, 2))
