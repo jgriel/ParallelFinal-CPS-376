@@ -46,9 +46,47 @@ print(c)
 c = a * b
 print(c)
 c = WorseNumPy.multiplyMatrixMatrix([[2, 3], [4, 23]], [[1, 9], [13, 7]])
-print(c)
+print(c)print("\nPARALLELIZATION TESTING")
+a = WorseNumPy.MatrixDouble(999, 999, 2)
+b = WorseNumPy.MatrixDouble(999, 999, 3)
+print("matrix matrix multiplication")
+WorseNumPy.setProcessors(1)
 
-c = a - b
+start = time.time()  
+a*b
+runtime = time.time() - start
+print(runtime, "seconds - serial")
+
+a = WorseNumPy.MatrixDouble(999, 999, 2)
+b = WorseNumPy.MatrixDouble(999, 999, 3)
+numProcesses = 32
+WorseNumPy.setProcessors(numProcesses)
+
+start = time.time()
+a*b
+runtime = time.time() - start
+print(runtime, "seconds - parallel", numProcesses, "processors")
+
+
+print("\nmatrix matrix addition")
+a = WorseNumPy.MatrixDouble(30000, 30000, 2)
+b = WorseNumPy.MatrixDouble(30000, 30000, 3)
+WorseNumPy.setProcessors(1)
+
+start = time.time()  
+a+b
+runtime = time.time() - start
+print(runtime, "seconds - serial")
+
+a = WorseNumPy.MatrixDouble(30000, 30000, 2)
+b = WorseNumPy.MatrixDouble(30000, 30000, 3)
+numProcesses = 8
+WorseNumPy.setProcessors(numProcesses)
+
+start = time.time()
+a+b
+runtime = time.time() - start
+print(runtime, "seconds - parallel", numProcesses, "processors")
 print(c)
 c = a.subtractMatrix(b)
 print(c)
@@ -85,18 +123,42 @@ print(a)
 print("\nPARALLELIZATION TESTING")
 a = WorseNumPy.MatrixDouble(999, 999, 2)
 b = WorseNumPy.MatrixDouble(999, 999, 3)
+print("matrix matrix multiplication")
 WorseNumPy.setProcessors(1)
 
 start = time.time()  
 a*b
 runtime = time.time() - start
-print(runtime, "seconds")
+print(runtime, "seconds - serial")
 
 a = WorseNumPy.MatrixDouble(999, 999, 2)
 b = WorseNumPy.MatrixDouble(999, 999, 3)
-WorseNumPy.setProcessors(32)
+numProcesses = 32
+WorseNumPy.setProcessors(numProcesses)
 
 start = time.time()
 a*b
 runtime = time.time() - start
-print(runtime, "seconds")
+print(runtime, "seconds - parallel", numProcesses, "processors")
+
+
+print("\nmatrix matrix addition")
+a = WorseNumPy.MatrixDouble(30000, 30000, 2)
+b = WorseNumPy.MatrixDouble(30000, 30000, 3)
+WorseNumPy.setProcessors(1)
+
+start = time.time()  
+a+b
+runtime = time.time() - start
+print(runtime, "seconds - serial")
+
+a = WorseNumPy.MatrixDouble(30000, 30000, 2)
+b = WorseNumPy.MatrixDouble(30000, 30000, 3)
+numProcesses = 8
+WorseNumPy.setProcessors(numProcesses)
+
+start = time.time()
+a+b
+runtime = time.time() - start
+print(runtime, "seconds - parallel", numProcesses, "processors")
+

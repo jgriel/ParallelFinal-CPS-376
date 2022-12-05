@@ -235,6 +235,7 @@ class Matrix {
             if (mat.size() != m1.mat.size()) {
                 throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
             }
+            #pragma omp parallel for
                 for (size_t x = 0; x < m1.mat.size(); x++) {
                     if (mat[x].size() != m1.mat[x].size()) {
                         throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
@@ -251,14 +252,15 @@ class Matrix {
             if (mat.size() != m1.mat.size()) {
                 throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
             }
-            for (size_t x = 0; x < m1.mat.size(); x++) {
-                if (mat[x].size() != m1.mat[x].size()) {
-                    throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+            #pragma omp parallel for
+                for (size_t x = 0; x < m1.mat.size(); x++) {
+                    if (mat[x].size() != m1.mat[x].size()) {
+                        throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+                    }
+                    for (size_t y = 0; y < mat[x].size(); y++) {
+                        m3.mat[x][y] = mat[x][y] - m1.mat[x][y];
+                    }
                 }
-                for (size_t y = 0; y < mat[x].size(); y++) {
-                    m3.mat[x][y] = mat[x][y] - m1.mat[x][y];
-                }
-            }
             return m3;
         }
 
@@ -285,31 +287,34 @@ class Matrix {
 
         Matrix scalarMultiply(T const &x) const {
             Matrix tmp_mat = Matrix(mat.size(), mat[0].size(), 0);
-            for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
-                for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
-                    tmp_mat.mat[i][j] = mat[i][j] * x;
+            #pragma omp parallel for
+                for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
+                    for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
+                        tmp_mat.mat[i][j] = mat[i][j] * x;
+                    }
                 }
-            }
             return tmp_mat;
         }
 
         Matrix scalarAdd(T const &x) const {
             Matrix tmp_mat = Matrix(mat.size(), mat[0].size(), 0);
-            for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
-                for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
-                    tmp_mat.mat[i][j] = mat[i][j] + x;
+            #pragma omp parallel for
+                for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
+                    for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
+                        tmp_mat.mat[i][j] = mat[i][j] + x;
+                    }
                 }
-            }
             return tmp_mat;
         }
 
         Matrix scalarSubtract(T const &x) const {
             Matrix tmp_mat = Matrix(mat.size(), mat[0].size(), 0);
-            for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
-                for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
-                    tmp_mat.mat[i][j] = mat[i][j] - x;
+            #pragma omp parallel for
+                for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
+                    for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
+                        tmp_mat.mat[i][j] = mat[i][j] - x;
+                    }
                 }
-            }
             return tmp_mat;
         }
 
@@ -361,11 +366,12 @@ class Matrix {
         }
 
         Matrix operator+=(T a) {
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    mat[i][j] = mat[i][j] + a;
+            #pragma omp parallel for
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < cols; j++) {
+                        mat[i][j] = mat[i][j] + a;
+                    }
                 }
-            }
             return *this;
         }
 
@@ -374,11 +380,12 @@ class Matrix {
         }
 
         Matrix operator-=(T a) {
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    mat[i][j] = mat[i][j] - a;
+            #pragma omp parallel for
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < cols; j++) {
+                        mat[i][j] = mat[i][j] - a;
+                    }
                 }
-            }
             return *this;
         }
 
@@ -387,11 +394,12 @@ class Matrix {
         }
         
         Matrix operator*=(T a) {
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    mat[i][j] = mat[i][j] * a;
+            #pragma omp parallel for
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < cols; j++) {
+                        mat[i][j] = mat[i][j] * a;
+                    }
                 }
-            }
             return *this;
         }
 
@@ -404,11 +412,12 @@ class Matrix {
             if (rows != mat_b.rows) {
                     throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
             }
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    mat[i][j] = mat[i][j] + mat_b.mat[i][j];
+            #pragma omp parallel for
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < cols; j++) {
+                        mat[i][j] = mat[i][j] + mat_b.mat[i][j];
+                    }
                 }
-            }
             return *this;
         }
 
@@ -420,11 +429,12 @@ class Matrix {
             if (rows != mat_b.rows) {
                     throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
             }
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    mat[i][j] = mat[i][j] - mat_b.mat[i][j];
+            #pragma omp parallel for
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < cols; j++) {
+                        mat[i][j] = mat[i][j] - mat_b.mat[i][j];
+                    }
                 }
-            }
             return *this;
         }
 
@@ -545,25 +555,28 @@ class Array {
 
         Array scalarAdd(T const &x) const {
             Array tmp = arr;
-            for (size_t i = 0; i < tmp.arr.size(); i++) {
-                tmp.arr[i] += x;
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < tmp.arr.size(); i++) {
+                    tmp.arr[i] += x;
+                }
             return tmp;
         }
 
         Array scalarSubtract(T const &x) const {
             Array tmp = arr;
-            for (size_t i = 0; i < tmp.arr.size(); i++) {
-                tmp.arr[i] -= x;
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < tmp.arr.size(); i++) {
+                    tmp.arr[i] -= x;
+                }
             return tmp;
         }
 
         Array scalarMultiply(T const &x) const {
             Array tmp = arr;
-            for (size_t i = 0; i < tmp.arr.size(); i++) {
-                tmp.arr[i] *= x;
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < tmp.arr.size(); i++) {
+                    tmp.arr[i] *= x;
+                }
             return tmp;
         }
 
@@ -572,10 +585,10 @@ class Array {
             if (tmp.arr.size() != arr_y.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
             }
-
-            for (size_t i = 0; i < tmp.arr.size(); i++) {
-                tmp.arr[i] += arr_y.arr[i];
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < tmp.arr.size(); i++) {
+                    tmp.arr[i] += arr_y.arr[i];
+                }
             return tmp;
         }
 
@@ -584,10 +597,10 @@ class Array {
             if (tmp.arr.size() != arr_y.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
             }
-
-            for (size_t i = 0; i < tmp.arr.size(); i++) {
-                tmp.arr[i] -= arr_y.arr[i];
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < tmp.arr.size(); i++) {
+                    tmp.arr[i] -= arr_y.arr[i];
+                }
             return tmp;
         }
 
@@ -616,9 +629,10 @@ class Array {
         }
 
         Array operator+=(T x) {
-            for (size_t i = 0; i < arr.size(); i++) {
-                arr[i] += x;
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < arr.size(); i++) {
+                    arr[i] += x;
+                }
 
             return *this;
         }
@@ -628,9 +642,10 @@ class Array {
         }
 
         Array operator-=(T x) {
-            for (size_t i = 0; i < arr.size(); i++) {
-                arr[i] -= x;
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < arr.size(); i++) {
+                    arr[i] -= x;
+                }
             
             return *this;
         }
@@ -640,9 +655,10 @@ class Array {
         }
 
         Array operator*=(T x) {
-            for (size_t i = 0; i < arr.size(); i++) {
-                arr[i] *= x;
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < arr.size(); i++) {
+                    arr[i] *= x;
+                }
             
             return *this;
         }
@@ -655,10 +671,10 @@ class Array {
             if (arr.size() != vec.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
             }
-
-            for (size_t i = 0; i < arr.size(); i++) {
-                arr[i] += vec.arr[i];
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < arr.size(); i++) {
+                    arr[i] += vec.arr[i];
+                }
             return *this;
         }
 
@@ -670,10 +686,10 @@ class Array {
             if (arr.size() != vec.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
             }
-
-            for (size_t i = 0; i < arr.size(); i++) {
-                arr[i] -= vec.arr[i];
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < arr.size(); i++) {
+                    arr[i] -= vec.arr[i];
+                }
             return *this;
         }
 
@@ -685,10 +701,10 @@ class Array {
             if (arr.size() != vec.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
             }
-
-            for (size_t i = 0; i < arr.size(); i++) {
-                arr[i] *= vec.arr[i];
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < arr.size(); i++) {
+                    arr[i] *= vec.arr[i];
+                }
             return *this;
         }
 
