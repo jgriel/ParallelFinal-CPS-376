@@ -1,5 +1,6 @@
 import WorseNumPy
 import numpy
+import time
 
 a = WorseNumPy.MatrixInt([[]])
 print(a)
@@ -80,3 +81,22 @@ print(a.L2Norm())
 
 a = WorseNumPy.MatrixFloat(5, 5, 1)
 print(a)
+
+print("\nPARALLELIZATION TESTING")
+a = WorseNumPy.MatrixDouble([[99999999999999999999999999999999999999999999999999, 99999999999999999999999999999999999999999999999999], [99999999999999999999999999999999999999999999999999, 99999999999999999999999999999999999999999999999999]])
+b = 99999999999
+
+start = time.time()   
+for i in range(5000000):
+    a*=b
+runtime = time.time() - start
+print(runtime, "seconds")
+
+a = WorseNumPy.MatrixDouble([[99999999999999999999999999999999999999999999999999, 99999999999999999999999999999999999999999999999999], [99999999999999999999999999999999999999999999999999, 99999999999999999999999999999999999999999999999999]])
+b = 99999999999
+WorseNumPy.setProcessors(4)
+start = time.time()
+for i in range(5000000):
+    a*=b
+runtime = time.time() - start
+print(runtime, "seconds")

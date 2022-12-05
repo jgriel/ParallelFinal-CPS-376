@@ -1,22 +1,24 @@
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <omp.h>
 #include <iostream>
 #include <string>
 #include <vector>
 
 
-// To compile c++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) WorseNumPy.cpp -o WorseNumPy$(python3-config --extension-suffix)
+// To compile c++ -O3 -Wall -shared -std=c++11 -fopenmp -fPIC $(python3 -m pybind11 --includes) WorseNumPy.cpp -o WorseNumPy$(python3-config --extension-suffix)
 
 
 int P = 1;
 
 void setProcessors(int num) {
+    omp_set_num_threads(num);
     P = num;
 }
 
-std::string getProcessors() {
-    return std::to_string(P);
+int getProcessors() {
+    return P;
 }
 
 int addInt(int i, int j) {
@@ -233,14 +235,14 @@ class Matrix {
             if (mat.size() != m1.mat.size()) {
                 throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
             }
-            for (size_t x = 0; x < m1.mat.size(); x++) {
-                if (mat[x].size() != m1.mat[x].size()) {
-                    throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+                for (size_t x = 0; x < m1.mat.size(); x++) {
+                    if (mat[x].size() != m1.mat[x].size()) {
+                        throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+                    }
+                    for (size_t y = 0; y < mat[x].size(); y++) {
+                        m3.mat[x][y] = mat[x][y] + m1.mat[x][y];
+                    }
                 }
-                for (size_t y = 0; y < mat[x].size(); y++) {
-                    m3.mat[x][y] = mat[x][y] + m1.mat[x][y];
-                }
-            }
             return m3;
         }
 
@@ -644,11 +646,11 @@ class Array {
             return *this;
         }
 
-        Array operator+(Array vec) const {
+        Array operator+(Array const &vec) const {
             return addArray(vec);
         }
 
-        Array operator+=(Array vec) {
+        Array operator+=(Array const &vec) {
             if (arr.size() != vec.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
             }
@@ -659,11 +661,11 @@ class Array {
             return *this;
         }
 
-        Array operator-(Array vec) const {
+        Array operator-(Array const &vec) const {
             return subtractArray(vec);
         }
 
-        Array operator-=(Array vec) {
+        Array operator-=(Array const &vec) {
             if (arr.size() != vec.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
             }
@@ -674,11 +676,11 @@ class Array {
             return *this;
         }
 
-        Array operator*(Array vec) const {
+        Array operator*(Array const &vec) const {
             return multiplyArray(vec);
         }
 
-        Array operator*=(Array vec) {
+        Array operator*=(Array const &vec) {
             if (arr.size() != vec.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
             }

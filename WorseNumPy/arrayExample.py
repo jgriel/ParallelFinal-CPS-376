@@ -1,4 +1,5 @@
 import WorseNumPy
+import time
 
 # ArrayInt CLASS
 print("ARRAY-INT +") 
