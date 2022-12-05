@@ -45,8 +45,8 @@ aa = z * y
 print(str(aa) + "\n")
 
 print("SET/GET PROC") 
-WorseNumPy.setProcessors(4)
-print(WorseNumPy.getProcessors())
+# WorseNumPy.setProcessors(4)
+# print(WorseNumPy.getProcessors())
 print()
 
 print("ARRAY-ARRAY HELPER CALLS") 
@@ -87,3 +87,25 @@ a = WorseNumPy.ArrayInt([1, 2, 3])
 print(a.L2Norm())
 a = WorseNumPy.ArrayInt([1, -2, 3])
 print(a.L2Norm())
+
+print("\nPARALLELIZATION TESTING")
+a = WorseNumPy.ArrayDouble(9999999999999999, 12423)
+b = WorseNumPy.ArrayDouble(9999999999999999, 12423)
+
+WorseNumPy.setProcessors(1)
+print(WorseNumPy.getProcessors())
+start = time.time()
+for i in range(5000000):
+    a*b
+runtime = time.time() - start
+print(runtime, "seconds")
+
+a = WorseNumPy.ArrayDouble(9999999999999999, 12423)
+b = WorseNumPy.ArrayDouble(9999999999999999, 12423)
+WorseNumPy.setProcessors(4)
+print(WorseNumPy.getProcessors())
+start = time.time()
+for i in range(5000000):
+    a*b
+runtime = time.time() - start
+print(runtime, "seconds")
