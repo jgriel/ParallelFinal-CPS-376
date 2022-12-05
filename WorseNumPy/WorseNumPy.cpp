@@ -542,7 +542,7 @@ class Array {
             arr = arr_b;
         }
 
-        Array scalarAdd(T x) const {
+        Array scalarAdd(T const &x) const {
             Array tmp = arr;
             for (size_t i = 0; i < tmp.arr.size(); i++) {
                 tmp.arr[i] += x;
@@ -550,7 +550,7 @@ class Array {
             return tmp;
         }
 
-        Array scalarSubtract(T x) const {
+        Array scalarSubtract(T const &x) const {
             Array tmp = arr;
             for (size_t i = 0; i < tmp.arr.size(); i++) {
                 tmp.arr[i] -= x;
@@ -558,7 +558,7 @@ class Array {
             return tmp;
         }
 
-        Array scalarMultiply(T x) const {
+        Array scalarMultiply(T const &x) const {
             Array tmp = arr;
             for (size_t i = 0; i < tmp.arr.size(); i++) {
                 tmp.arr[i] *= x;
