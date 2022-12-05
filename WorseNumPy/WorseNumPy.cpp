@@ -142,6 +142,18 @@ std::vector<int> multiplyVectorVector(std::vector<int> arr_x, std::vector<int> a
     return arr_z;
 }
 
+std::vector<int> multiplyVectorVectorP(std::vector<int> arr_x, std::vector<int> arr_y) {
+    if (arr_x.size() != arr_y.size()){
+        throw std::invalid_argument("Length of vectors must the same!");
+    }
+
+    #pragma omp parallel for
+        for (size_t i = 0; i < arr_x.size(); i++) {
+            arr_x[i] *= arr_y[i];
+        }
+    return arr_x;
+}
+
 std::vector<std::vector<int>> scalarMatrixMultiply(int x, std::vector<std::vector<int>> mat) {
     for (size_t i = 0; i < mat.size(); i++) {
         for (size_t j = 0; j < mat[i].size(); j++) {
@@ -595,10 +607,10 @@ class Array {
             if (tmp.arr.size() != arr_y.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
             }
-            
-            for (size_t i = 0; i < tmp.arr.size(); i++) {
-                tmp.arr[i] *= arr_y.arr[i];
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < tmp.arr.size(); i++) {
+                    tmp.arr[i] *= arr_y.arr[i];
+                }
             return tmp;
         }
         
@@ -918,6 +930,7 @@ PYBIND11_MODULE(WorseNumPy, m) {
     m.def("addVectorVector", &addVectorVector, "A function that adds together values at equivalent indices between two vectors");
     m.def("subtractVectorVector", &subtractVectorVector, "A function that subtracts two values at equivalent indices between two vectors");
     m.def("multiplyVectorVector", &multiplyVectorVector, "A function that multiplies two values at equivalent indices between two vectors");
+    m.def("multiplyVectorVectorP", &multiplyVectorVectorP, "A function that multiplies two values at equivalent indices between two vectors");
     m.def("scalarMatrixMultiply", &scalarMatrixMultiply, "A function that performs scalar multiplication between an integer and a matrix of integers");
     m.def("scalarMatrixAdd", &scalarMatrixAdd, "A function that performs scalar multiplication between an integer and a matrix of integers");
     m.def("scalarMatrixSubtract", &scalarMatrixSubtract, "A function that performs scalar multiplication between an integer and a matrix of integers");
