@@ -566,7 +566,7 @@ class Array {
             return tmp;
         }
 
-        Array addArray(Array arr_y) const {
+        Array addArray(Array const &arr_y) const {
             Array tmp = arr;
             if (tmp.arr.size() != arr_y.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
@@ -578,7 +578,7 @@ class Array {
             return tmp;
         }
 
-        Array subtractArray(Array arr_y) const {
+        Array subtractArray(Array const &arr_y) const {
             Array tmp = arr;
             if (tmp.arr.size() != arr_y.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
@@ -590,7 +590,7 @@ class Array {
             return tmp;
         }
 
-        Array multiplyArray(Array arr_y) const {
+        Array multiplyArray(Array const &arr_y) const {
             Array tmp = arr;
             if (tmp.arr.size() != arr_y.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
