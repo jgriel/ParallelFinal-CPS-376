@@ -1,72 +1,82 @@
 import WorseNumPy
 
 # ArrayInt CLASS
+print("ARRAY-INT +") 
 y = WorseNumPy.ArrayInt([1, 2, 3, 4])
-print(y[0])
-y[0] = 7
-print(y.toString())
+print(y.getItem(0))
+y.setItem(0, 7)
+print(y)
 y = y + 1
-print(y.toString())
+print(y)
 y += 1
-print(y.toString() + "\n")
+print(str(y) + "\n")
 
+print("ARRAY-INT -") 
 y = WorseNumPy.ArrayInt([1, 2, 3, 4])
 y = y - 2
-print(y.toString())
+print(y)
 y -= 2
-print(y.toString() + "\n")
+print(str(y) + "\n")
 
+print("ARRAY-INT *") 
 z = WorseNumPy.ArrayInt([1, 2, 3, 4])
 z = z * 2
-print(z.toString())
+print(z)
 z *= 2 
-print(z.toString() + "\n")
+print(str(z) + "\n")
 
  
+print("ARRAY-ARRAY") 
 z = WorseNumPy.ArrayInt([1, 2, 3, 4]) 
 y = WorseNumPy.ArrayInt([1, 2, 3, 4])
+print("z: " + str(z) + "\n" + "y: " + str(y) + "\n")
 
-print(z.toString() + "\n" + y.toString() + "\n")
-
+print("z + y") 
 aa = z + y
-print(aa.toString() + "\n")
+print(str(aa) + "\n")
 
+print("z - y") 
 aa = z - y
-print(aa.toString() + "\n")
+print(str(aa) + "\n")
  
+print("z * y") 
 aa = z * y
-print(aa.toString() + "\n")
+print(str(aa) + "\n")
 
+print("SET/GET PROC") 
 WorseNumPy.setProcessors(4)
 print(WorseNumPy.getProcessors())
 print()
 
+print("ARRAY-ARRAY HELPER CALLS") 
 aa = z + y
-print(aa.toString())
+print(aa)
 a = WorseNumPy.ArrayInt([1, 1, 1, 1])
 aa = aa.addArray(a)
-print(aa.toString() + "\n")
+print(str(aa) + "\n")
 
 aa = z + y
-print(aa.toString())
+print(aa)
 a = WorseNumPy.ArrayInt([1, 1, 1, 1])
 aa = aa.subtractArray(a)
-print(aa.toString() + "\n")
+print(str(aa) + "\n")
 
 aa = z + y
-print(aa.toString())
+print(aa)
 a = WorseNumPy.ArrayInt([2, 2, 2, 2])
 aa = aa.multiplyArray(a)
-print(aa.toString() + "\n")
+print(str(aa) + "\n")
 
+print("ARRAY-CONSTUCTOR") 
 z = WorseNumPy.ArrayInt(5)
-print(z.toString())
+print(z)
 z = WorseNumPy.ArrayInt(5, 7)
-print(z.toString() + "\n")
+print(str(z) + "\n")
 
 z = WorseNumPy.ArrayFloat(5, 7)
-print(z.toString() + "\n")
+print(str(z) + "\n")
 
+print("ARRAY-NORM") 
 a = WorseNumPy.ArrayInt([1, 2, 3])
 print(a.L1Norm())
 a = WorseNumPy.ArrayInt([1, -2, 3])

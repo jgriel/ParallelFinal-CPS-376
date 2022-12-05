@@ -218,7 +218,7 @@ class Matrix {
             mat = mat_b;
         }
 
-        std::string toString() {
+        std::string __repr__() {
             std::string msg = "[";
             for (size_t i = 0; i < mat.size() - 1; i++) {
                 msg += rowToString(mat[i]) + ", ";
@@ -329,6 +329,7 @@ class Matrix {
         T getItem(int i, int j) {
             return mat[i][j];
         }
+        
         std::vector<T> getArray(int i) {
             return mat[i];
         }
@@ -337,6 +338,7 @@ class Matrix {
         void setItem(int i, int j, T x) {
             mat[i][j] = x;
         }
+
         //set entire row
         void setArray(int i, std::vector<T> x) {
             if (x.size() != mat[i].size()) {
@@ -354,6 +356,7 @@ class Matrix {
         Matrix operator+(T a) const {
             return scalarAdd(a);
         }
+
         Matrix operator+=(T a) {
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
@@ -366,6 +369,7 @@ class Matrix {
         Matrix operator-(T a) const {
             return scalarSubtract(a);
         }
+
         Matrix operator-=(T a) {
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
@@ -378,6 +382,7 @@ class Matrix {
         Matrix operator*(T a) const {
             return scalarMultiply(a);
         }
+        
         Matrix operator*=(T a) {
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
@@ -391,6 +396,7 @@ class Matrix {
         Matrix operator+(Matrix const &mat_b) const {
             return addMatrix(mat_b);
         }
+
         Matrix operator+=(Matrix const &mat_b) {
             if (rows != mat_b.rows) {
                     throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
@@ -406,6 +412,7 @@ class Matrix {
         Matrix operator-(Matrix const &mat_b) const {
             return subtractMatrix(mat_b);
         }
+
         Matrix operator-=(Matrix const &mat_b) {
             if (rows != mat_b.rows) {
                     throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
@@ -421,6 +428,7 @@ class Matrix {
         Matrix operator*(Matrix const &mat_b) const {
             return multiplyMatrix(mat_b);
         }
+
         Matrix operator*=(Matrix const &mat_b) const {
             return multiplyMatrix(mat_b);
         }
@@ -592,11 +600,11 @@ class Array {
             return tmp;
         }
         
-        T operator[](int i) const {
+        T getItem(int i) {
             return arr[i];
         }
 
-        void __setitem__(int i, T x) {
+        void setItem(int i, T x) {
             arr[i] = x;
         }
 
@@ -604,51 +612,84 @@ class Array {
             return scalarAdd(x);
         }
 
-        Array operator+=(T x) const {
-            return scalarAdd(x);
+        Array operator+=(T x) {
+            for (size_t i = 0; i < arr.size(); i++) {
+                arr[i] += x;
+            }
+
+            return *this;
         }
 
         Array operator-(T x) const {
             return scalarSubtract(x);
         }
 
-        Array operator-=(T x) const {
-            return scalarSubtract(x);
+        Array operator-=(T x) {
+            for (size_t i = 0; i < arr.size(); i++) {
+                arr[i] -= x;
+            }
+            
+            return *this;
         }
 
         Array operator*(T x) const {
             return scalarMultiply(x);
         }
 
-        Array operator*=(T x) const {
-            return scalarMultiply(x);
+        Array operator*=(T x) {
+            for (size_t i = 0; i < arr.size(); i++) {
+                arr[i] *= x;
+            }
+            
+            return *this;
         }
 
         Array operator+(Array vec) const {
             return addArray(vec);
         }
 
-        Array operator+=(Array vec) const {
-            return addArray(vec);
+        Array operator+=(Array vec) {
+            if (arr.size() != vec.arr.size()){
+                throw std::invalid_argument("Length of vectors must the same!");
+            }
+
+            for (size_t i = 0; i < arr.size(); i++) {
+                arr[i] += vec.arr[i];
+            }
+            return *this;
         }
 
         Array operator-(Array vec) const {
             return subtractArray(vec);
         }
 
-        Array operator-=(Array vec) const {
-            return subtractArray(vec);
+        Array operator-=(Array vec) {
+            if (arr.size() != vec.arr.size()){
+                throw std::invalid_argument("Length of vectors must the same!");
+            }
+
+            for (size_t i = 0; i < arr.size(); i++) {
+                arr[i] -= vec.arr[i];
+            }
+            return *this;
         }
 
         Array operator*(Array vec) const {
             return multiplyArray(vec);
         }
 
-        Array operator*=(Array vec) const {
-            return multiplyArray(vec);
+        Array operator*=(Array vec) {
+            if (arr.size() != vec.arr.size()){
+                throw std::invalid_argument("Length of vectors must the same!");
+            }
+
+            for (size_t i = 0; i < arr.size(); i++) {
+                arr[i] *= vec.arr[i];
+            }
+            return *this;
         }
 
-        std::string toString() {
+        std::string __repr__() {
             if (arr.size() == 0) {
                 return "[]";
             }
@@ -696,7 +737,7 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def("getArray", &Matrix<int>::getArray)
         .def("setItem", &Matrix<int>::setItem)
         .def("setArray", &Matrix<int>::setArray)
-        .def("toString", &Matrix<int>::toString)
+        .def("__repr__", &Matrix<int>::__repr__)
         .def("addMatrix", &Matrix<int>::addMatrix)
         .def("subtractMatrix", &Matrix<int>::subtractMatrix)
         .def("multiplyMatrix", &Matrix<int>::multiplyMatrix)
@@ -727,7 +768,7 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def("getArray", &Matrix<float>::getArray)
         .def("setItem", &Matrix<float>::setItem)
         .def("setArray", &Matrix<float>::setArray)
-        .def("toString", &Matrix<float>::toString)
+        .def("__repr__", &Matrix<float>::__repr__)
         .def("addMatrix", &Matrix<float>::addMatrix)
         .def("subtractMatrix", &Matrix<float>::subtractMatrix)
         .def("multiplyMatrix", &Matrix<float>::multiplyMatrix)
@@ -758,7 +799,7 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def("getArray", &Matrix<double>::getArray)
         .def("setItem", &Matrix<double>::setItem)
         .def("setArray", &Matrix<double>::setArray)
-        .def("toString", &Matrix<double>::toString)
+        .def("__repr__", &Matrix<double>::__repr__)
         .def("addMatrix", &Matrix<double>::addMatrix)
         .def("subtractMatrix", &Matrix<double>::subtractMatrix)
         .def("multiplyMatrix", &Matrix<double>::multiplyMatrix)
@@ -791,8 +832,8 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def("addArray", &Array<int>::addArray)
         .def("subtractArray", &Array<int>::subtractArray)
         .def("multiplyArray", &Array<int>::multiplyArray)
-        .def("__getitem__", &Array<int>::operator[])
-        .def("__setitem__", &Array<int>::__setitem__)
+        .def("getItem", &Array<int>::getItem)
+        .def("setItem", &Array<int>::setItem)
         .def(pybind11::self + int())
         .def(pybind11::self += int())
         .def(pybind11::self - int())
@@ -805,7 +846,7 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
         .def(pybind11::self *= pybind11::self)
-        .def("toString", &Array<int>::toString)
+        .def("__repr__", &Array<int>::__repr__)
         .def("L1Norm", &Array<int>::L1Norm)
         .def("L2Norm", &Array<int>::L2Norm);
 
@@ -819,8 +860,8 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def("addArray", &Array<float>::addArray)
         .def("subtractArray", &Array<float>::subtractArray)
         .def("multiplyArray", &Array<float>::multiplyArray)
-        .def("__getitem__", &Array<float>::operator[])
-        .def("__setitem__", &Array<float>::__setitem__)
+        .def("getItem", &Array<float>::getItem)
+        .def("setItem", &Array<float>::setItem)
         .def(pybind11::self + float())
         .def(pybind11::self += float())
         .def(pybind11::self - float())
@@ -833,7 +874,7 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
         .def(pybind11::self *= pybind11::self)
-        .def("toString", &Array<float>::toString)
+        .def("__repr__", &Array<float>::__repr__)
         .def("L1Norm", &Array<float>::L1Norm)
         .def("L2Norm", &Array<float>::L2Norm);
 
@@ -847,8 +888,8 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def("addArray", &Array<double>::addArray)
         .def("subtractArray", &Array<double>::subtractArray)
         .def("multiplyArray", &Array<double>::multiplyArray)
-        .def("__getitem__", &Array<double>::operator[])
-        .def("__setitem__", &Array<double>::__setitem__)
+        .def("getItem", &Array<double>::getItem)
+        .def("setItem", &Array<double>::setItem)
         .def(pybind11::self + double())
         .def(pybind11::self += double())
         .def(pybind11::self - double())
@@ -861,7 +902,7 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::self -= pybind11::self)
         .def(pybind11::self * pybind11::self)
         .def(pybind11::self *= pybind11::self)
-        .def("toString", &Array<double>::toString)
+        .def("__repr__", &Array<double>::__repr__)
         .def("L1Norm", &Array<double>::L1Norm)
         .def("L2Norm", &Array<double>::L2Norm);
 
