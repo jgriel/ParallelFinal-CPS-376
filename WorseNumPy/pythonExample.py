@@ -40,3 +40,27 @@ b = numpy.array([[1,2,3],[4,5,6]])
 x = numpy.multiply(b,a)
 print(x)
 print()
+
+print("\nPARALLELIZATION TESTING")
+
+WorseNumPy.setProcessors(1)
+print(WorseNumPy.getProcessors())
+a = [1] * 200000
+b = [2] * 200000
+
+start = time.time()
+WorseNumPy.multiplyVectorVectorP(a,b)
+runtime = time.time() - start
+
+print(runtime, "seconds")
+
+WorseNumPy.setProcessors(4)
+print(WorseNumPy.getProcessors())
+a = [1] * 300000000
+b = [2] * 300000000
+
+start = time.time()
+WorseNumPy.multiplyVectorVectorP(a,b)
+runtime = time.time() - start
+
+print(runtime, "seconds")

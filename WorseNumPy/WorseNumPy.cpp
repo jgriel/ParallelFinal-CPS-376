@@ -595,10 +595,10 @@ class Array {
             if (tmp.arr.size() != arr_y.arr.size()){
                 throw std::invalid_argument("Length of vectors must the same!");
             }
-            
-            for (size_t i = 0; i < tmp.arr.size(); i++) {
-                tmp.arr[i] *= arr_y.arr[i];
-            }
+            #pragma omp parallel for
+                for (size_t i = 0; i < tmp.arr.size(); i++) {
+                    tmp.arr[i] *= arr_y.arr[i];
+                }
             return tmp;
         }
         

@@ -89,23 +89,25 @@ a = WorseNumPy.ArrayInt([1, -2, 3])
 print(a.L2Norm())
 
 print("\nPARALLELIZATION TESTING")
-a = WorseNumPy.ArrayDouble(9999999999999999, 12423)
-b = WorseNumPy.ArrayDouble(9999999999999999, 12423)
+a = WorseNumPy.ArrayDouble(9999999, 12423)
+b = WorseNumPy.ArrayDouble(9999999, 12423)
 
 WorseNumPy.setProcessors(1)
 print(WorseNumPy.getProcessors())
+
 start = time.time()
-for i in range(5000000):
-    a*b
+a*b
 runtime = time.time() - start
+
 print(runtime, "seconds")
 
-a = WorseNumPy.ArrayDouble(9999999999999999, 12423)
-b = WorseNumPy.ArrayDouble(9999999999999999, 12423)
-WorseNumPy.setProcessors(4)
+a = WorseNumPy.ArrayDouble(9999999, 12423)
+b = WorseNumPy.ArrayDouble(9999999, 12423)
+WorseNumPy.setProcessors(8)
 print(WorseNumPy.getProcessors())
+
 start = time.time()
-for i in range(5000000):
-    a*b
+a*b
 runtime = time.time() - start
+
 print(runtime, "seconds")
