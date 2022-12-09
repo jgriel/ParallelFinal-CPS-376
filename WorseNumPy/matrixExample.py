@@ -46,7 +46,9 @@ print(c)
 c = a * b
 print(c)
 c = WorseNumPy.multiplyMatrixMatrix([[2, 3], [4, 23]], [[1, 9], [13, 7]])
-print(c)print("\nPARALLELIZATION TESTING")
+print(c)
+
+print("\nPARALLELIZATION TESTING")
 a = WorseNumPy.MatrixDouble(999, 999, 2)
 b = WorseNumPy.MatrixDouble(999, 999, 3)
 print("matrix matrix multiplication")
