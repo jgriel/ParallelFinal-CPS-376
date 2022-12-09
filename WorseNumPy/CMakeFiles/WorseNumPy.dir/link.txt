@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC  -flto -shared  -o WorseNumPy.cpython-38-x86_64-linux-gnu.so CMakeFiles/WorseNumPy.dir/src/WorseNumPy.cpp.o  libMatrix.a /usr/lib/gcc/x86_64-linux-gnu/9/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.so 

@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/cps/home/nfox/Desktop/parallelcomputing/ParallelFinal/WorseNumPy/src/Matrix.cpp
+omp.h
+-
+iostream
+-
+string
+-
+vector
+-
+Matrix.h
+/cps/home/nfox/Desktop/parallelcomputing/ParallelFinal/WorseNumPy/src/Matrix.h
+
+/cps/home/nfox/Desktop/parallelcomputing/ParallelFinal/WorseNumPy/src/Matrix.h
+iostream
+-
+string
+-
+vector
+-
+
