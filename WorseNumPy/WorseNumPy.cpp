@@ -38,16 +38,17 @@ std::vector<std::vector<int>> addMatrixMatrix(std::vector<std::vector<int>> m1, 
     if (m1.size() != m2.size()) {
         throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
     }
-    for (size_t x = 0; x < m1.size(); x++) {
-        if (m1[x].size() != m2[x].size()) {
-            throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+    #pragma omp parallel for
+        for (size_t x = 0; x < m1.size(); x++) {
+            if (m1[x].size() != m2[x].size()) {
+                throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+            }
+            std::vector<int> tmp = {};
+            for (size_t y = 0; y < m1[x].size(); y++) {
+                tmp.push_back(m1[x][y] + m2[x][y]);
+            }
+            m3.push_back(tmp);
         }
-        std::vector<int> tmp = {};
-        for (size_t y = 0; y < m1[x].size(); y++) {
-            tmp.push_back(m1[x][y] + m2[x][y]);
-        }
-        m3.push_back(tmp);
-    }
     return m3;
 }
 
@@ -56,16 +57,17 @@ std::vector<std::vector<int>> subtractMatrixMatrix(std::vector<std::vector<int>>
     if (m1.size() != m2.size()) {
         throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
     }
-    for (size_t x = 0; x < m1.size(); x++) {
-        if (m1[x].size() != m2[x].size()) {
-            throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+    #pragma omp parallel for
+        for (size_t x = 0; x < m1.size(); x++) {
+            if (m1[x].size() != m2[x].size()) {
+                throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+            }
+            std::vector<int> tmp = {};
+            for (size_t y = 0; y < m1[x].size(); y++) {
+                tmp.push_back(m1[x][y] - m2[x][y]);
+            }
+            m3.push_back(tmp);
         }
-        std::vector<int> tmp = {};
-        for (size_t y = 0; y < m1[x].size(); y++) {
-            tmp.push_back(m1[x][y] - m2[x][y]);
-        }
-        m3.push_back(tmp);
-    }
     return m3;
 }
 
@@ -76,16 +78,17 @@ std::vector<std::vector<int>> multiplyMatrixMatrix(std::vector<std::vector<int>>
             throw std::invalid_argument("Length of each row in matrix #1 must equal length of each column in matrix #2!");
         }
         std::vector<int> tmp = {};
-        for (size_t m2_col = 0; m2_col < m2[0].size(); m2_col++) {
-            int acc = 0;
-            for (size_t idx = 0; idx < m1[m1_row].size(); idx++) {
-                if (m1.size() != m2[idx].size()) {
-                    throw std::invalid_argument("Length of each column in matrix #1 must equal length of each row in matrix #2!");
+        #pragma omp parallel for
+            for (size_t m2_col = 0; m2_col < m2[0].size(); m2_col++) {
+                int acc = 0;
+                for (size_t idx = 0; idx < m1[m1_row].size(); idx++) {
+                    if (m1.size() != m2[idx].size()) {
+                        throw std::invalid_argument("Length of each column in matrix #1 must equal length of each row in matrix #2!");
+                    }
+                    acc += m1[m1_row][idx] * m2[idx][m2_col];
                 }
-                acc += m1[m1_row][idx] * m2[idx][m2_col];
+                tmp.push_back(acc);
             }
-            tmp.push_back(acc);
-        }
         m3.push_back(tmp);
     }
     return m3;
@@ -93,16 +96,17 @@ std::vector<std::vector<int>> multiplyMatrixMatrix(std::vector<std::vector<int>>
 
 std::vector<std::vector<int>> multiplyVectorMatrix(std::vector<int> arr, std::vector<std::vector<int>> mat) {
     std::vector<std::vector<int>> mat_b = {};
-    for (size_t i = 0; i < mat.size(); i++) {
-        if (arr.size() != mat[i].size()) {
-            throw std::invalid_argument("Length of all rows in the matrix must == legnth of the vector!");
-        }
+    #pragma omp parallel for
+        for (size_t i = 0; i < mat.size(); i++) {
+            if (arr.size() != mat[i].size()) {
+                throw std::invalid_argument("Length of all rows in the matrix must == legnth of the vector!");
+            }
 
-        mat_b.push_back({});
-        for (size_t j = 0; j < mat[i].size(); j++) {
-            mat_b[i].push_back(arr[j] * mat[i][j]);
+            mat_b.push_back({});
+            for (size_t j = 0; j < mat[i].size(); j++) {
+                mat_b[i].push_back(arr[j] * mat[i][j]);
+            }
         }
-    }
     return mat_b;
 }
 
@@ -112,9 +116,10 @@ std::vector<int> addVectorVector(std::vector<int> arr_x, std::vector<int> arr_y)
     }
 
     std::vector<int> arr_z = {};
-    for (size_t i = 0; i < arr_x.size(); i++) {
-        arr_z.push_back(arr_x[i] + arr_y[i]);
-    }
+    #pragma omp parallel for
+        for (size_t i = 0; i < arr_x.size(); i++) {
+            arr_z.push_back(arr_x[i] + arr_y[i]);
+        }
     return arr_z;
 }
 
@@ -124,9 +129,10 @@ std::vector<int> subtractVectorVector(std::vector<int> arr_x, std::vector<int> a
     }
 
     std::vector<int> arr_z = {};
-    for (size_t i = 0; i < arr_x.size(); i++) {
-        arr_z.push_back(arr_x[i] - arr_y[i]);
-    }
+    #pragma omp parallel for
+        for (size_t i = 0; i < arr_x.size(); i++) {
+            arr_z.push_back(arr_x[i] - arr_y[i]);
+        }
     return arr_z;
 }
 
@@ -136,57 +142,64 @@ std::vector<int> multiplyVectorVector(std::vector<int> arr_x, std::vector<int> a
     }
 
     std::vector<int> arr_z = {};
-    for (size_t i = 0; i < arr_x.size(); i++) {
-        arr_z.push_back(arr_x[i] * arr_y[i]);
-    }
+    #pragma omp parallel for
+        for (size_t i = 0; i < arr_x.size(); i++) {
+            arr_z.push_back(arr_x[i] * arr_y[i]);
+        }
     return arr_z;
 }
 
 std::vector<std::vector<int>> scalarMatrixMultiply(int x, std::vector<std::vector<int>> mat) {
-    for (size_t i = 0; i < mat.size(); i++) {
-        for (size_t j = 0; j < mat[i].size(); j++) {
-            mat[i][j] *= x;
+    #pragma omp parallel for
+        for (size_t i = 0; i < mat.size(); i++) {
+            for (size_t j = 0; j < mat[i].size(); j++) {
+                mat[i][j] *= x;
+            }
         }
-    }
     return mat;
 }
 
 std::vector<std::vector<int>> scalarMatrixAdd(int x, std::vector<std::vector<int>> mat) {
-    for (size_t i = 0; i < mat.size(); i++) {
-        for (size_t j = 0; j < mat[i].size(); j++) {
-            mat[i][j] += x;
+    #pragma omp parallel for
+        for (size_t i = 0; i < mat.size(); i++) {
+            for (size_t j = 0; j < mat[i].size(); j++) {
+                mat[i][j] += x;
+            }
         }
-    }
     return mat;
 }
 
 std::vector<std::vector<int>> scalarMatrixSubtract(int x, std::vector<std::vector<int>> mat) {
-    for (size_t i = 0; i < mat.size(); i++) {
-        for (size_t j = 0; j < mat[i].size(); j++) {
-            mat[i][j] -= x;
+    #pragma omp parallel for
+        for (size_t i = 0; i < mat.size(); i++) {
+            for (size_t j = 0; j < mat[i].size(); j++) {
+                mat[i][j] -= x;
+            }
         }
-    }
     return mat;
 }
 
 std::vector<int> scalarAddVector(int x, std::vector<int> arr) {
-    for (size_t i = 0; i < arr.size(); i++) {
-        arr[i] += x;
-    }
+    #pragma omp parallel for
+        for (size_t i = 0; i < arr.size(); i++) {
+            arr[i] += x;
+        }
     return arr;
 }
 
 std::vector<int> scalarSubtractVector(int x, std::vector<int> arr) {
-    for (size_t i = 0; i < arr.size(); i++) {
-        arr[i] -= x;
-    }
+    #pragma omp parallel for
+        for (size_t i = 0; i < arr.size(); i++) {
+            arr[i] -= x;
+        }
     return arr;
 }
 
 std::vector<int> scalarMultiplyVector(int x, std::vector<int> arr) {
-    for (size_t i = 0; i < arr.size(); i++) {
-        arr[i] *= x;
-    }
+    #pragma omp parallel for
+        for (size_t i = 0; i < arr.size(); i++) {
+            arr[i] *= x;
+        }
     return arr;
 }
 
