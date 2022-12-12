@@ -1,5 +1,5 @@
 import WorseNumPy
-import numpy
+import numpy as np
 import time
 
 def meAA(p):
@@ -145,36 +145,89 @@ if __name__ == "__main__":
     while p < 33:
         meAA(p)
         p *= 2
+        
+    n1 = np.full([1000000], 12345.12, dtype = float)
+    n2 = np.full([1000000], 12345.12, dtype = float)
+    
+    start = time.time()
+    n1 *= n2
+    runtime = time.time() - start
+    print(runtime, "seconds - Numpy")
+    
     
     print("\n*")
     p = 1
     while p < 33:
         mAA(p)
         p *= 2
+        
+    n1 = np.full([1000000], 12345.12, dtype = float)
+    n2 = np.full([1000000], 12345.12, dtype = float)
+    
+    start = time.time()
+    n1 * n2
+    runtime = time.time() - start
+    print(runtime, "seconds - Numpy")
+    
     
     print("\n-=")
     p = 1
     while p < 33:
         seAA(p)
         p *= 2
+        
+    n1 = np.full([1000000], 12345.12, dtype = float)
+    n2 = np.full([1000000], 12345.12, dtype = float)
+    
+    start = time.time()
+    n1 -= n2
+    runtime = time.time() - start
+    print(runtime, "seconds - Numpy")
+    
     
     print("\n-")
     p = 1
     while p < 33:
         sAA(p)
         p *= 2
+        
+    n1 = np.full([1000000], 12345.12, dtype = float)
+    n2 = np.full([1000000], 12345.12, dtype = float)
+    
+    start = time.time()
+    n1 - n2
+    runtime = time.time() - start
+    print(runtime, "seconds - Numpy")
+    
     
     print("\n+=")
     p = 1
     while p < 33:
         aeAA(p)
         p *= 2
+        
+    n1 = np.full([1000000], 12345.12, dtype = float)
+    n2 = np.full([1000000], 12345.12, dtype = float)
+    
+    start = time.time()
+    n1 += n2
+    runtime = time.time() - start
+    print(runtime, "seconds - Numpy")
+    
     
     print("\n+")
     p = 1
     while p < 33:
         aAA(p)
         p *= 2
+        
+    n1 = np.full([1000000], 12345.12, dtype = float)
+    n2 = np.full([1000000], 12345.12, dtype = float)
+    
+    start = time.time()
+    n1 + n2
+    runtime = time.time() - start
+    print(runtime, "seconds - Numpy")
         
 
     print("\n\nARRAY-FLOAT")
@@ -183,12 +236,29 @@ if __name__ == "__main__":
     while p < 33:
         meAF(p)
         p *= 2
+        
+    n1 = np.full([1000000], 12345.12, dtype = float)
+    n2 = 12345.12
+    
+    start = time.time()
+    n1 *= n2
+    runtime = time.time() - start
+    print(runtime, "seconds - Numpy")
     
     print("\n*")
     p = 1
     while p < 33:
         mAF(p)
         p *= 2
+        
+    n1 = np.full([1000000], 12345.12, dtype = float)
+    n2 = 12345.12
+    
+    start = time.time()
+    n1 * n2
+    runtime = time.time() - start
+    print(runtime, "seconds - Numpy")
+    
     
     print("\n-=")
     p = 1
@@ -196,20 +266,56 @@ if __name__ == "__main__":
         seAF(p)
         p *= 2
     
+    n1 = np.full([1000000], 12345.12, dtype = float)
+    n2 = 12345.12
+    
+    start = time.time()
+    n1 -= n2
+    runtime = time.time() - start
+    print(runtime, "seconds - Numpy")
+    
+    
     print("\n-")
     p = 1
     while p < 33:
         sAF(p)
         p *= 2
+        
+    n1 = np.full([1000000], 12345.12, dtype = float)
+    n2 = 12345.12
+    
+    start = time.time()
+    n1 - n2
+    runtime = time.time() - start
+    print(runtime, "seconds - Numpy")
+    
     
     print("\n+=")
     p = 1
     while p < 33:
         aeAF(p)
         p *= 2
+        
+    n1 = np.full([1000000], 12345.12, dtype = float)
+    n2 = 12345.12
+    
+    start = time.time()
+    n1 += n2
+    runtime = time.time() - start
+    print(runtime, "seconds - Numpy")
+    
     
     print("\n+")
     p = 1
     while p < 33:
         aAF(p)
         p *= 2
+        
+    n1 = np.full([1000000], 12345.12, dtype = float)
+    n2 = 12345.12
+    
+    start = time.time()
+    n1 + n2
+    runtime = time.time() - start
+    print(runtime, "seconds - Numpy")
+    
