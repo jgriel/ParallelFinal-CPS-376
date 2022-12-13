@@ -100,36 +100,89 @@ print("L2 Norm:", a.L2Norm())
 
 print("\n\n---ARRAY DEMONSTRATION---\n")
 # DEMONSTRATE CONSTRUCTOR
-print("Constructor method: ")
+print("Constructor method: Array of length 7 prefilled with integer 7s")
+print('WorseNumPy.ArrayInt(7, 7) =', WorseNumPy.ArrayInt(7, 7))
 
-
-print("Constructor method: ")
-
+print("\nConstructor method: Array of length 7 prefilled with float 7.777777s")
+print('WorseNumPy.ArrayFloat(7, 7.777777) =', WorseNumPy.ArrayFloat(7,7.777777))
 
 # DEMONSTRATE SCALAR-VECTOR OPERATIONS
 # scalar add, scalar subtract, scalar multiply
-print("Scalar add demonstration")
+print("\nScalar add demonstration")
+a = WorseNumPy.ArrayInt([5, 75, 775, 7775, 77775])
 
-print("Scalar subtraction deomonstration")
+print('a =', a)
+print('b =', 2)
 
+print('\na + b =', a+2)
 
-print("scalar multiply demonstration")
+print("\nScalar subtraction deomonstration")
+a = WorseNumPy.ArrayInt([9, 79, 779, 7779, 77779])
 
+print('a =', a)
+print('b =', 2)
+print('\na - b =', a-2)
+
+print("\nscalar multiply demonstration")
+a = WorseNumPy.ArrayInt([7, 77, 777, 7777, 77777])
+
+print('a =', a)
+print('b =', 2)
+
+print('\na * b =', a*2)
 
 # DEMONSTRATE MATRIX-MATRIX OPERATIONS
 # matrix add, matrix substract, matrix multiply
-print("Vector add demonstration")
+print("\nVector add demonstration")
+a = WorseNumPy.ArrayFloat([0.35, 3.5, 35.35, 3535.3535])
+b = WorseNumPy.ArrayFloat([0.35, 3.5, 35.35, 3535.3535])
 
+print('a =', a)
+print('b =', b)
 
-print("Vector subtract demonstration")
+print('\na + b =', a+b)
 
+print("\nVector subtract demonstration")
+a = WorseNumPy.ArrayFloat([1.05, 10.5, 105.35, 10535.3535])
+b = WorseNumPy.ArrayFloat([0.35, 3.5, 35.35, 3535.3535])
 
-print("Vector multiply demonstration")
+print('a =', a)
+print('b =', b)
+
+print('\na - b =', a-b)
+
+print("\nVector multiply demonstration")
 
 #DEMONSTRATE GET AND SET OPERATIONS
-print("Get/set item demonstration demonstration")
+print("\nGet/set item demonstration demonstration")
+a = WorseNumPy.ArrayFloat([1.1, 11.11, 111.111, 1111.1111])
+b = WorseNumPy.ArrayFloat([7.0, 70.0, 700.0, 7000.0])
 
+print('a =', a)
+print('b =', b)
+
+print('\na * b =', a*b)
 
 # DEMONSTRATE NORM OPERATIONS
 # L1 Norm, L2 Norm
-print("L1 and L2 norm demonstration")
+print("\nL1 and L2 norm demonstration")
+a = WorseNumPy.ArrayInt([0, 7, 77, 777, 7777])
+b = WorseNumPy.ArrayFloat([7.7, 77.77, 777.777, 7777.7777, 77777.7777])
+
+print('a =', a)
+print('b =', b)
+
+print("\nL1Norm of a:", a.L1Norm())
+print("L2Norm of a:", a.L2Norm())
+
+print("\nL1Norm of b:", b.L1Norm())
+print("L2Norm of b:", b.L2Norm())
+
+print("\n\n---PUBLIC METHOD DEMONSTRATION---\n")
+a = [2, 4, 7]
+b = [[2, 4, 10], [4, 8, 14], [4, 16, 49]]
+
+print("a =", a)
+print("b =", b)
+
+print("\nWorseNumPy.multiplyVectorMatrix(a, b) =", WorseNumPy.multiplyVectorMatrix(a, b))
