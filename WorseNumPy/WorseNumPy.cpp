@@ -248,10 +248,10 @@ class Matrix {
             }
             return mat[i][j];
         }
-        // get sub array in matrix
-        std::vector<T> getArray(int i) {
+        // get row in matrix
+        std::vector<T> getRow(int i) {
             if (i < 0 or i >= cols) {
-                throw std::invalid_argument("getArray: Invalid index!");
+                throw std::invalid_argument("getRow: Invalid index!");
             }
             return mat[i];
         }
@@ -263,9 +263,9 @@ class Matrix {
             mat[i][j] = x;
         }
         // set entire sub array in the matrix
-        void setArray(int i, std::vector<T> x) {
+        void setRow(int i, std::vector<T> x) {
             if (i < 0 or i >= cols) {
-                throw std::invalid_argument("setArray: Invalid index!");
+                throw std::invalid_argument("setRow: Invalid index!");
             }
             if (x.size() != mat[i].size()) {
                 throw std::invalid_argument("Array size does not match matrix dimensions!");
@@ -716,9 +716,9 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::init<int, int, int>())
         .def(pybind11::init<int, int>())
         .def("getItem", &Matrix<int>::getItem)
-        .def("getArray", &Matrix<int>::getArray)
+        .def("getRow", &Matrix<int>::getRow)
         .def("setItem", &Matrix<int>::setItem)
-        .def("setArray", &Matrix<int>::setArray)
+        .def("setRow", &Matrix<int>::setRow)
         .def("__repr__", &Matrix<int>::__repr__)
         .def("addMatrix", &Matrix<int>::addMatrix)
         .def("subtractMatrix", &Matrix<int>::subtractMatrix)
@@ -746,9 +746,9 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::init<float, float, float>())
         .def(pybind11::init<float, float>())
         .def("getItem", &Matrix<float>::getItem)
-        .def("getArray", &Matrix<float>::getArray)
+        .def("getRow", &Matrix<float>::getRow)
         .def("setItem", &Matrix<float>::setItem)
-        .def("setArray", &Matrix<float>::setArray)
+        .def("setRow", &Matrix<float>::setRow)
         .def("__repr__", &Matrix<float>::__repr__)
         .def("addMatrix", &Matrix<float>::addMatrix)
         .def("subtractMatrix", &Matrix<float>::subtractMatrix)
@@ -776,9 +776,9 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def(pybind11::init<double, double, double>())
         .def(pybind11::init<double, double>())
         .def("getItem", &Matrix<double>::getItem)
-        .def("getArray", &Matrix<double>::getArray)
+        .def("getRow", &Matrix<double>::getRow)
         .def("setItem", &Matrix<double>::setItem)
-        .def("setArray", &Matrix<double>::setArray)
+        .def("setRow", &Matrix<double>::setRow)
         .def("__repr__", &Matrix<double>::__repr__)
         .def("addMatrix", &Matrix<double>::addMatrix)
         .def("subtractMatrix", &Matrix<double>::subtractMatrix)

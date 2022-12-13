@@ -1,6 +1,4 @@
 import WorseNumPy
-import numpy
-import time
 
 a = WorseNumPy.MatrixInt([[]])
 print(a)
@@ -62,12 +60,13 @@ a = WorseNumPy.addMatrixMatrix([[1.0,2.0,3.0],[1.2,2.3,3.45]],[[1.5,2.5,3],[1,2.
 print(a)
 a = WorseNumPy.scalarAddVector(5.5, [1,2,4])
 print(a)
-# a = WorseNumPy.MatrixDouble([[7, -2, 2, 2], 
-#                        [2, 8, -2, 3], 
-#                        [-3, 2, 11, -4], 
-#                        [-2, 3, 2, 10]])
-# print(a.L1Norm())
-# print(a.L2Norm())
+
+a = WorseNumPy.MatrixDouble([[7, -2, 2, 2], 
+                       [2, 8, -2, 3], 
+                       [-3, 2, 11, -4], 
+                       [-2, 3, 2, 10]])
+print(a.L1Norm())
+print(a.L2Norm())
 
 # a = WorseNumPy.MatrixInt(4, 3, 0)
 # print(a)
