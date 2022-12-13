@@ -36,7 +36,7 @@ print("\nPARALLELIZATION TESTING")
 
 WorseNumPy.setProcessors(1)
 print(WorseNumPy.getProcessors())
-a = [1] * 2000000
+a = [1] * 2000000 
 b = [2] * 2000000
 
 start = time.time()
