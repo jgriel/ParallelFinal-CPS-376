@@ -1,0 +1,5 @@
+/cps/home/nfox/Desktop/parallelcomputing/ParallelFinal/WorseNumPy/build/CMakeFiles/rebuild_cache.dir
+/cps/home/nfox/Desktop/parallelcomputing/ParallelFinal/WorseNumPy/build/CMakeFiles/edit_cache.dir
+/cps/home/nfox/Desktop/parallelcomputing/ParallelFinal/WorseNumPy/build/CMakeFiles/WorseNumPy.dir
+/cps/home/nfox/Desktop/parallelcomputing/ParallelFinal/WorseNumPy/build/pybind11/CMakeFiles/rebuild_cache.dir
+/cps/home/nfox/Desktop/parallelcomputing/ParallelFinal/WorseNumPy/build/pybind11/CMakeFiles/edit_cache.dir
