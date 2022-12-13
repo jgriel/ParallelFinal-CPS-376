@@ -9,8 +9,8 @@
 
 // To compile c++ -O3 -Wall -shared -std=c++11 -fopenmp -fPIC $(python3 -m pybind11 --includes) WorseNumPy.cpp -o WorseNumPy$(python3-config --extension-suffix)
 
-
-int P = 1;
+// intialized to -1 because number of processors is set to OpenMP default which is unknown
+int P = -1;
 
 void setProcessors(int num) {
     omp_set_num_threads(num);
@@ -21,20 +21,11 @@ int getProcessors() {
     return P;
 }
 
-int addInt(int i, int j) {
-    return i + j;
-}
-
-int subtractInt(int i, int j) {
-    return i - j;
-}
-
-int multiplyInt(int i, int j) {
-    return i * j;
-}
-
-std::vector<std::vector<int>> addMatrixMatrix(std::vector<std::vector<int>> m1, std::vector<std::vector<int>> m2) {
-    std::vector<std::vector<int>> m3 = {};
+// public methods that do not require the Matrix and Array class (for convenience)
+template<typename T>
+std::vector<std::vector<T>> addMatrixMatrix(std::vector<std::vector<T>> &m1, std::vector<std::vector<T>> &m2) {
+    std::vector<T> subArray(m1[0].size(), 0);
+    std::vector<std::vector<T>> m3(m1.size(), subArray);
     if (m1.size() != m2.size()) {
         throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
     }
@@ -43,17 +34,17 @@ std::vector<std::vector<int>> addMatrixMatrix(std::vector<std::vector<int>> m1, 
             if (m1[x].size() != m2[x].size()) {
                 throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
             }
-            std::vector<int> tmp = {};
             for (size_t y = 0; y < m1[x].size(); y++) {
-                tmp.push_back(m1[x][y] + m2[x][y]);
+                m3[x][y] = (m1[x][y] + m2[x][y]);
             }
-            m3.push_back(tmp);
         }
     return m3;
 }
 
-std::vector<std::vector<int>> subtractMatrixMatrix(std::vector<std::vector<int>> m1, std::vector<std::vector<int>> m2) {
-    std::vector<std::vector<int>> m3 = {};
+template<typename T>
+std::vector<std::vector<T>> subtractMatrixMatrix(std::vector<std::vector<T>> &m1, std::vector<std::vector<T>> &m2) {
+    std::vector<T> subArray(m1[0].size(), 0);
+    std::vector<std::vector<T>> m3(m1.size(), subArray);
     if (m1.size() != m2.size()) {
         throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
     }
@@ -62,94 +53,94 @@ std::vector<std::vector<int>> subtractMatrixMatrix(std::vector<std::vector<int>>
             if (m1[x].size() != m2[x].size()) {
                 throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
             }
-            std::vector<int> tmp = {};
             for (size_t y = 0; y < m1[x].size(); y++) {
-                tmp.push_back(m1[x][y] - m2[x][y]);
+                m3[x][y] = (m1[x][y] - m2[x][y]);
             }
-            m3.push_back(tmp);
         }
     return m3;
 }
 
-std::vector<std::vector<int>> multiplyMatrixMatrix(std::vector<std::vector<int>> m1, std::vector<std::vector<int>> m2) {
-    std::vector<std::vector<int>> m3 = {};
-    for (size_t m1_row = 0; m1_row < m1.size(); m1_row++) {
-        if (m1[m1_row].size() != m2.size()) {
-            throw std::invalid_argument("Length of each row in matrix #1 must equal length of each column in matrix #2!");
-        }
-        std::vector<int> tmp = {};
-        #pragma omp parallel for
+template<typename T>
+std::vector<std::vector<T>> multiplyMatrixMatrix(std::vector<std::vector<T>> &m1, std::vector<std::vector<T>> &m2) {
+    std::vector<T> subArray(m2[0].size(), 0);
+    std::vector<std::vector<T>> m3(m1.size(), subArray);
+
+    #pragma omp parallel for
+        for (size_t m1_row = 0; m1_row < m1.size(); m1_row++) {
+            if (m1[m1_row].size() != m2.size()) {
+                throw std::invalid_argument("Length of each row in matrix #1 must equal length of each column in matrix #2!");
+            }
             for (size_t m2_col = 0; m2_col < m2[0].size(); m2_col++) {
-                int acc = 0;
                 for (size_t idx = 0; idx < m1[m1_row].size(); idx++) {
                     if (m1.size() != m2[idx].size()) {
                         throw std::invalid_argument("Length of each column in matrix #1 must equal length of each row in matrix #2!");
                     }
-                    acc += m1[m1_row][idx] * m2[idx][m2_col];
+                    m3[m1_row][m2_col] += m1[m1_row][idx] * m2[idx][m2_col];
                 }
-                tmp.push_back(acc);
             }
-        m3.push_back(tmp);
-    }
+        }
     return m3;
 }
 
-std::vector<std::vector<int>> multiplyVectorMatrix(std::vector<int> arr, std::vector<std::vector<int>> mat) {
-    std::vector<std::vector<int>> mat_b = {};
+template<typename T>
+std::vector<std::vector<T>> multiplyVectorMatrix(std::vector<T> &arr, std::vector<std::vector<T>> &mat) {
+    std::vector<std::vector<T>> mat_b(3, {0});
     #pragma omp parallel for
         for (size_t i = 0; i < mat.size(); i++) {
             if (arr.size() != mat[i].size()) {
                 throw std::invalid_argument("Length of all rows in the matrix must == legnth of the vector!");
             }
-
-            mat_b.push_back({});
             for (size_t j = 0; j < mat[i].size(); j++) {
-                mat_b[i].push_back(arr[j] * mat[i][j]);
+                mat_b[i][0] += (arr[j] * mat[i][j]);
             }
         }
     return mat_b;
 }
 
-std::vector<int> addVectorVector(std::vector<int> arr_x, std::vector<int> arr_y) {
+template<typename T>
+std::vector<T> addVectorVector(std::vector<T> &arr_x, std::vector<T> &arr_y) {
     if (arr_x.size() != arr_y.size()){
         throw std::invalid_argument("Length of vectors must the same!");
     }
 
-    std::vector<int> arr_z = {};
+    std::vector<T> arr_z(arr_x.size(), 0);
     #pragma omp parallel for
         for (size_t i = 0; i < arr_x.size(); i++) {
-            arr_z.push_back(arr_x[i] + arr_y[i]);
+            arr_z[i] = (arr_x[i] + arr_y[i]);
         }
     return arr_z;
 }
 
-std::vector<int> subtractVectorVector(std::vector<int> arr_x, std::vector<int> arr_y) {
+template<typename T>
+std::vector<T> subtractVectorVector(std::vector<T> &arr_x, std::vector<T> &arr_y) {
     if (arr_x.size() != arr_y.size()){
         throw std::invalid_argument("Length of vectors must the same!");
     }
 
-    std::vector<int> arr_z = {};
+    std::vector<T> arr_z(arr_x.size(), 0);
     #pragma omp parallel for
         for (size_t i = 0; i < arr_x.size(); i++) {
-            arr_z.push_back(arr_x[i] - arr_y[i]);
+            arr_z[i] = (arr_x[i] - arr_y[i]);
         }
     return arr_z;
 }
 
-std::vector<int> multiplyVectorVector(std::vector<int> arr_x, std::vector<int> arr_y) {
+template<typename T>
+std::vector<T> multiplyVectorVector(std::vector<T> &arr_x, std::vector<T> &arr_y) {
     if (arr_x.size() != arr_y.size()){
         throw std::invalid_argument("Length of vectors must the same!");
     }
 
-    std::vector<int> arr_z = {};
+    std::vector<T> arr_z(arr_x.size(), 0);
     #pragma omp parallel for
         for (size_t i = 0; i < arr_x.size(); i++) {
-            arr_z.push_back(arr_x[i] * arr_y[i]);
+            arr_z[i] = (arr_x[i] * arr_y[i]);
         }
     return arr_z;
 }
 
-std::vector<std::vector<int>> scalarMatrixMultiply(int x, std::vector<std::vector<int>> mat) {
+template<typename T>
+std::vector<std::vector<T>> scalarMatrixMultiply(T x, std::vector<std::vector<T>> mat) {
     #pragma omp parallel for
         for (size_t i = 0; i < mat.size(); i++) {
             for (size_t j = 0; j < mat[i].size(); j++) {
@@ -159,7 +150,8 @@ std::vector<std::vector<int>> scalarMatrixMultiply(int x, std::vector<std::vecto
     return mat;
 }
 
-std::vector<std::vector<int>> scalarMatrixAdd(int x, std::vector<std::vector<int>> mat) {
+template<typename T>
+std::vector<std::vector<T>> scalarMatrixAdd(T x, std::vector<std::vector<T>> mat) {
     #pragma omp parallel for
         for (size_t i = 0; i < mat.size(); i++) {
             for (size_t j = 0; j < mat[i].size(); j++) {
@@ -169,7 +161,8 @@ std::vector<std::vector<int>> scalarMatrixAdd(int x, std::vector<std::vector<int
     return mat;
 }
 
-std::vector<std::vector<int>> scalarMatrixSubtract(int x, std::vector<std::vector<int>> mat) {
+template<typename T>
+std::vector<std::vector<T>> scalarMatrixSubtract(T x, std::vector<std::vector<T>> mat) {
     #pragma omp parallel for
         for (size_t i = 0; i < mat.size(); i++) {
             for (size_t j = 0; j < mat[i].size(); j++) {
@@ -179,7 +172,9 @@ std::vector<std::vector<int>> scalarMatrixSubtract(int x, std::vector<std::vecto
     return mat;
 }
 
-std::vector<int> scalarAddVector(int x, std::vector<int> arr) {
+template<typename T>
+
+std::vector<T> scalarAddVector(T x, std::vector<T> arr) {
     #pragma omp parallel for
         for (size_t i = 0; i < arr.size(); i++) {
             arr[i] += x;
@@ -187,7 +182,8 @@ std::vector<int> scalarAddVector(int x, std::vector<int> arr) {
     return arr;
 }
 
-std::vector<int> scalarSubtractVector(int x, std::vector<int> arr) {
+template<typename T>
+std::vector<T> scalarSubtractVector(T x, std::vector<T> arr) {
     #pragma omp parallel for
         for (size_t i = 0; i < arr.size(); i++) {
             arr[i] -= x;
@@ -195,7 +191,8 @@ std::vector<int> scalarSubtractVector(int x, std::vector<int> arr) {
     return arr;
 }
 
-std::vector<int> scalarMultiplyVector(int x, std::vector<int> arr) {
+template<typename T>
+std::vector<T> scalarMultiplyVector(T x, std::vector<T> arr) {
     #pragma omp parallel for
         for (size_t i = 0; i < arr.size(); i++) {
             arr[i] *= x;
@@ -207,21 +204,24 @@ std::vector<int> scalarMultiplyVector(int x, std::vector<int> arr) {
 template <typename T>
 class Matrix {
     public:
-        // NOTE: crashes when n = 0
+        // constructor method to create n x m matrix
         Matrix(int rowSize, int colSize, T value = 0) {
+            if (rowSize < 1 or colSize < 1) {
+                throw std::invalid_argument("Row size and column size must be greater than 0!");
+            }
             rows = rowSize;
             cols = colSize;
-            std::vector<std::vector<T>> tmp;
-            std::vector<T> subVec = {};
-            for (int i = 0; i < rows; i++) {
-                tmp.push_back(subVec);
-                for (int j = 0; j < cols; j++) {
-                    tmp[i].push_back(value);
+            std::vector<T> subArray(cols, 0);
+            std::vector<std::vector<T>> tmp_mat(rows, subArray);
+            #pragma omp parallel for
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < cols; j++) {
+                        tmp_mat[i][j] = value;
+                    }
                 }
-            }
-            mat = tmp;
+            mat = tmp_mat;
         }
-
+        // constructor method to create a matrix when a std::vector<std::vector<T>> is passed in 
         Matrix(std::vector<std::vector<T>> mat_b) {
             rows = mat_b.size();
             if (mat_b.size() > 0) {
@@ -230,85 +230,54 @@ class Matrix {
             else {
                 cols = 0;
             }
+            #pragma omp parallel for
+                for (std::vector<T> row : mat_b) {
+                    int rowSize = row.size();
+                    if (rowSize != cols) {
+                        throw std::invalid_argument("Length of each row must match!");
+                    }
+                }
+            
             mat = mat_b;
         }
 
-        std::string __repr__() {
-            std::string msg = "[";
-            for (size_t i = 0; i < mat.size() - 1; i++) {
-                msg += rowToString(mat[i]) + ", ";
+        // get element in matrix
+        T getItem(int i, int j) {
+            if (i < 0 or i >= rows or j < 0 or j >= cols) {
+                throw std::invalid_argument("getItem: Invalid index!");
             }
-
-            msg += rowToString(mat[mat.size() - 1]) + "]";
-            return msg;
+            return mat[i][j];
         }
-
-        Matrix addMatrix(Matrix const &m1) const{
-            Matrix m3 = Matrix(mat.size(), mat[0].size(), 0);
-            if (mat.size() != m1.mat.size()) {
-                throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+        // get sub array in matrix
+        std::vector<T> getArray(int i) {
+            if (i < 0 or i >= cols) {
+                throw std::invalid_argument("getArray: Invalid index!");
             }
-            #pragma omp parallel for
-                for (size_t x = 0; x < m1.mat.size(); x++) {
-                    if (mat[x].size() != m1.mat[x].size()) {
-                        throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
-                    }
-                    for (size_t y = 0; y < mat[x].size(); y++) {
-                        m3.mat[x][y] = mat[x][y] + m1.mat[x][y];
-                    }
-                }
-            return m3;
+            return mat[i];
         }
-
-        Matrix subtractMatrix(Matrix const &m1) const{
-            Matrix m3 = Matrix(mat.size(), mat[0].size(), 0);
-            if (mat.size() != m1.mat.size()) {
-                throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+        // set element in matrix
+        void setItem(int i, int j, T x) {
+            if (i < 0 or i >= rows or j < 0 or j >= cols) {
+                throw std::invalid_argument("setItem: Invalid index!");
             }
-            #pragma omp parallel for
-                for (size_t x = 0; x < m1.mat.size(); x++) {
-                    if (mat[x].size() != m1.mat[x].size()) {
-                        throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
-                    }
-                    for (size_t y = 0; y < mat[x].size(); y++) {
-                        m3.mat[x][y] = mat[x][y] - m1.mat[x][y];
-                    }
-                }
-            return m3;
+            mat[i][j] = x;
         }
-
-        Matrix multiplyMatrix(Matrix const &m1) const {
-            Matrix tmp_mat = Matrix(mat.size(), m1.mat[0].size(), 0);
-            #pragma omp parallel for
-                for (size_t mat_row = 0; mat_row < mat.size(); mat_row++) {
-                    if (mat[mat_row].size() != m1.mat.size()) {
-                        throw std::invalid_argument("Columns in each row of matrix #1 must equal length of the number of rows in matrix #2!");
-                    }
-                    for (size_t m1_col = 0; m1_col < m1.mat[0].size(); m1_col++) {
-                        int acc = 0;
-                        for (size_t idx = 0; idx < mat[mat_row].size(); idx++) {
-                            if (mat.size() != m1.mat[idx].size()) {
-                                throw std::invalid_argument("Length of each column in matrix #1 must equal length of each row in matrix #2!");
-                            }
-                            acc += mat[mat_row][idx] * m1.mat[idx][m1_col];
-                        }
-                        tmp_mat.mat[mat_row][m1_col] = acc;
-                    }
-                }
-            return tmp_mat;
+        // set entire sub array in the matrix
+        void setArray(int i, std::vector<T> x) {
+            if (i < 0 or i >= cols) {
+                throw std::invalid_argument("setArray: Invalid index!");
+            }
+            if (x.size() != mat[i].size()) {
+                throw std::invalid_argument("Array size does not match matrix dimensions!");
+            }
+            size_t j = i;
+            if (i < -1 or j > mat.size() - 1) {
+                throw std::invalid_argument("Index out of bounds!");
+            }
+            mat[i] = x;
         }
-
-        Matrix scalarMultiply(T const &x) const {
-            Matrix tmp_mat = Matrix(mat.size(), mat[0].size(), 0);
-            #pragma omp parallel for
-                for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
-                    for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
-                        tmp_mat.mat[i][j] = mat[i][j] * x;
-                    }
-                }
-            return tmp_mat;
-        }
-
+        
+        // Matrix scalar opertations
         Matrix scalarAdd(T const &x) const {
             Matrix tmp_mat = Matrix(mat.size(), mat[0].size(), 0);
             #pragma omp parallel for
@@ -331,49 +300,67 @@ class Matrix {
             return tmp_mat;
         }
 
-        // Matrix multiplyVectorMatrix(Array arr) {
-        //     Matrix mat_b = Matrix(0, 0);
-        //     for (size_t i = 0; i < mat.size(); i++) {
-        //         if (arr.size() != mat[i].size()) {
-        //             throw std::invalid_argument("Length of all rows in the matrix must == length of the vector!");
-        //         }
-
-        //         mat_b.mat.push_back({});
-        //         for (size_t j = 0; j < mat[i].size(); j++) {
-        //             mat_b.mat[i].push_back(arr[j] * mat[i][j]);
-        //         }
-        //     }
-        //     return mat_b;
-        // }
-
-        //__getitem__
-        T getItem(int i, int j) {
-            return mat[i][j];
-        }
-        
-        std::vector<T> getArray(int i) {
-            return mat[i];
-        }
-        
-        //set single element
-        void setItem(int i, int j, T x) {
-            mat[i][j] = x;
+        Matrix scalarMultiply(T const &x) const {
+            Matrix tmp_mat = Matrix(mat.size(), mat[0].size(), 0);
+            #pragma omp parallel for
+                for (size_t i = 0; i < tmp_mat.mat.size(); i++) {
+                    for (size_t j = 0; j < tmp_mat.mat[i].size(); j++) {
+                        tmp_mat.mat[i][j] = mat[i][j] * x;
+                    }
+                }
+            return tmp_mat;
         }
 
-        //set entire row
-        void setArray(int i, std::vector<T> x) {
-            if (x.size() != mat[i].size()) {
-                throw std::invalid_argument("Array size does not match matrix dimensions!");
+        // Matrix Matrix operations
+        Matrix addMatrix(Matrix const &m1) const{
+            if (rows != m1.rows or cols != m1.cols) {
+                throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
             }
-            size_t j = i;
-            if (i < -1 or j > mat.size() - 1) {
-                throw std::invalid_argument("Index out of bounds!");
-            }
-            mat[i] = x;
-        }
-        
 
-        // Matrix scalar operations
+            Matrix m3 = Matrix(mat.size(), mat[0].size(), 0);
+            #pragma omp parallel for
+                for (size_t x = 0; x < m1.mat.size(); x++) {
+                    for (size_t y = 0; y < mat[x].size(); y++) {
+                        m3.mat[x][y] = mat[x][y] + m1.mat[x][y];
+                    }
+                }
+            return m3;
+        }
+
+        Matrix subtractMatrix(Matrix const &m1) const{
+            if (rows != m1.rows or cols != m1.cols) {
+                throw std::invalid_argument("Size of Matrix #1 and Matrix #2 must be the same!");
+            }
+
+            Matrix m3 = Matrix(mat.size(), mat[0].size(), 0);
+            #pragma omp parallel for
+                for (size_t x = 0; x < m1.mat.size(); x++) {
+                    for (size_t y = 0; y < mat[x].size(); y++) {
+                        m3.mat[x][y] = mat[x][y] - m1.mat[x][y];
+                    }
+                }
+            return m3;
+        }
+
+        Matrix multiplyMatrix(Matrix const &m1) const {
+            if (cols != m1.rows) {
+                throw std::invalid_argument("Number of columns in matrix #1 must equal length of the number of rows in matrix #2!");
+            }
+            Matrix tmp_mat = Matrix(mat.size(), m1.mat[0].size(), 0);
+            #pragma omp parallel for
+                for (size_t mat_row = 0; mat_row < mat.size(); mat_row++) {
+                    if (mat[mat_row].size() != m1.mat.size()) {
+                    }
+                    for (size_t m1_col = 0; m1_col < m1.mat[0].size(); m1_col++) {
+                        for (size_t idx = 0; idx < mat[mat_row].size(); idx++) {
+                            tmp_mat.mat[mat_row][m1_col] += mat[mat_row][idx] * m1.mat[idx][m1_col];
+                        }
+                    }
+                }
+            return tmp_mat;
+        }
+
+        // overload opertations
         Matrix operator+(T a) const {
             return scalarAdd(a);
         }
@@ -416,7 +403,6 @@ class Matrix {
             return *this;
         }
 
-        // Matrix Matrix operations
         Matrix operator+(Matrix const &mat_b) const {
             return addMatrix(mat_b);
         }
@@ -459,77 +445,38 @@ class Matrix {
             return multiplyMatrix(mat_b);
         }
 
-        // Matrix Vector Opertations
-
         std::vector<T> L1Norm() {
-            std::vector<T> normVec = {};
-            for (int col = 0; col < cols; col++) {
-                T curNorm = 0;
-                for (int row = 0; row < rows; row++) {
-                    curNorm += abs(mat[row][col]);
+            std::vector<T> normVec(cols, 0);
+            #pragma omp parallel for
+                for (int col = 0; col < cols; col++) {
+                    for (int row = 0; row < rows; row++) {
+                        normVec[col] += abs(mat[row][col]);
+                    }
                 }
-                normVec.push_back(curNorm);
-            }
             return normVec;
         }
 
         std::vector<float> L2Norm() {
-            std::vector<float> normVec = {};
-            for (int col = 0; col < cols; col++) {
-                T acc = 0;
-                for (int row = 0; row < rows; row++) {
-                    acc += pow(mat[row][col], 2);
+            std::vector<float> normVec(cols, 0);
+            #pragma omp parallel for
+                for (int col = 0; col < cols; col++) {
+                    for (int row = 0; row < rows; row++) {
+                        normVec[col] += pow(mat[row][col], 2);
+                    }
+                    normVec[col] = sqrt(normVec[col]);
                 }
-                normVec.push_back(sqrt(acc));
-            }
             return normVec;
         }
 
-        // Can probably delete but need to confirm with McDanel if the above norm methods are what he wants.
+        std::string __repr__() {
+            std::string msg = "[";
+            for (size_t i = 0; i < mat.size() - 1; i++) {
+                msg += rowToString(mat[i]) + ", ";
+            }
 
-        // T L1Norm() {
-        //     T maxNorm = 0;
-        //     for (int col = 0; col < cols; col++) {
-        //         T curNorm = 0;
-        //         for (int row = 0; row < rows; row++) {
-        //             curNorm += abs(mat[row][col]);
-        //         }
-        //         if (curNorm > maxNorm) {
-        //             maxNorm = curNorm;
-        //         }
-        //     }
-        //     return maxNorm;
-        // }
-
-
-        // std::vector<float> norm(int normType) {
-        //     std::vector<float> normVec = {};
-        //     // L1
-        //     if (normType == 1) {
-        //         for (int col = 0; col < cols; col++) {
-        //             T curNorm = 0;
-        //             for (int row = 0; row < rows; row++) {
-        //                 curNorm += abs(mat[row][col]);
-        //             }
-        //             normVec.push_back(curNorm);
-        //         }
-        //     }
-        //     // L2
-        //     else if (normType == 2) {
-        //         for (int col = 0; col < cols; col++) {
-        //             T acc = 0;
-        //             for (int row = 0; row < rows; row++) {
-        //                 acc += pow(mat[row][col], 2);
-        //             }
-        //             normVec.push_back(sqrt(acc));
-        //         }
-        //     }
-        //     else {
-        //         throw std::invalid_argument("Norm type must be 1 (L1Norm) or 2 (L2Norm)!");
-        //     }
-
-        //     return normVec;
-        // }
+            msg += rowToString(mat[mat.size() - 1]) + "]";
+            return msg;
+        }
 
     private:
         std::vector<std::vector<T>> mat;
@@ -555,17 +502,24 @@ class Matrix {
 template <typename T>
 class Array {
     public:
+        // constructors
         Array(int size, T value = 0) {
-            std::vector<T> tmp;
-            for (int i = 0; i < size; i++) {
-                tmp.push_back(value);
-            }
+            std::vector<T> tmp(size, value);
             arr = tmp;
         }
         Array(std::vector<T> arr_b) {
             arr = arr_b;
         }
 
+               
+        T getItem(int i) {
+            return arr[i];
+        }
+        void setItem(int i, T x) {
+            arr[i] = x;
+        }
+
+        // Array scalar opertaions 
         Array scalarAdd(T const &x) const {
             Array tmp = arr;
             #pragma omp parallel for
@@ -593,6 +547,7 @@ class Array {
             return tmp;
         }
 
+        // Array Array operations
         Array addArray(Array const &arr_y) const {
             Array tmp = arr;
             if (tmp.arr.size() != arr_y.arr.size()){
@@ -628,15 +583,8 @@ class Array {
                 }
             return tmp;
         }
-        
-        T getItem(int i) {
-            return arr[i];
-        }
 
-        void setItem(int i, T x) {
-            arr[i] = x;
-        }
-
+        // overload opertators
         Array operator+(T x) const {
             return scalarAdd(x);
         }
@@ -721,6 +669,25 @@ class Array {
             return *this;
         }
 
+        T L1Norm() {
+            T acc = 0;
+            #pragma omp parallel for
+                for (T element : arr) {
+                    acc += abs(element);
+                }
+            return acc;
+        }
+
+        float L2Norm() {
+            T acc = 0;
+            #pragma omp parallel for
+                for (T element : arr) {
+                    acc += pow(element, 2);
+                }
+            float ans = sqrt(acc);
+            return ans;
+        }
+
         std::string __repr__() {
             if (arr.size() == 0) {
                 return "[]";
@@ -735,23 +702,6 @@ class Array {
             return msg;
         }
 
-        T L1Norm() {
-            T acc = 0;
-            for (T element : arr) {
-                acc += abs(element);
-            }
-            return acc;
-        }
-
-        float L2Norm() {
-            T acc = 0;
-            for (T element : arr) {
-                acc += pow(element, 2);
-            }
-            float ans = sqrt(acc);
-            return ans;
-        }
-
     private:
         std::vector<T> arr;
       
@@ -759,7 +709,7 @@ class Array {
 
 
 PYBIND11_MODULE(WorseNumPy, m) {
-    m.doc() = "pybind11 example plugin"; // optional module docstring
+    m.doc() = "Our attempt to create a parallelized matrix library similar to NumPy";
 
     pybind11::class_<Matrix<int>>(m, "MatrixInt")
         .def(pybind11::init<std::vector<std::vector<int>>>())
@@ -776,7 +726,6 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def("scalarMultiply", &Matrix<int>::scalarMultiply)
         .def("scalarAdd", &Matrix<int>::scalarAdd)
         .def("scalarSubtract", &Matrix<int>::scalarSubtract)
-        // .def("multiplyVectorMatrix", &Matrix<int>::multiplyVectorMatrix)
         .def(pybind11::self + int())
         .def(pybind11::self += int())
         .def(pybind11::self - int())
@@ -807,7 +756,6 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def("scalarMultiply", &Matrix<float>::scalarMultiply)
         .def("scalarAdd", &Matrix<float>::scalarAdd)
         .def("scalarSubtract", &Matrix<float>::scalarSubtract)
-        // .def("multiplyVectorMatrix", &Matrix<int>::multiplyVectorMatrix)
         .def(pybind11::self + float())
         .def(pybind11::self += float())
         .def(pybind11::self - float())
@@ -838,7 +786,6 @@ PYBIND11_MODULE(WorseNumPy, m) {
         .def("scalarMultiply", &Matrix<double>::scalarMultiply)
         .def("scalarAdd", &Matrix<double>::scalarAdd)
         .def("scalarSubtract", &Matrix<double>::scalarSubtract)
-        // .def("multiplyVectorMatrix", &Matrix<int>::multiplyVectorMatrix)
         .def(pybind11::self + double())
         .def(pybind11::self += double())
         .def(pybind11::self - double())
@@ -941,20 +888,45 @@ PYBIND11_MODULE(WorseNumPy, m) {
 
     m.def("setProcessors", &setProcessors, "A function that sets the number of processors for the library");
     m.def("getProcessors", &getProcessors, "A function that returns the number of processors set for the library");
-    m.def("addInt", &addInt, "A function that adds two numbers");
-    m.def("subtractInt", &subtractInt, "A function that subtracts two numbers");
-    m.def("multiplyInt", &multiplyInt, "A function that multiplies two numbers");
-    m.def("multiplyVectorMatrix", &multiplyVectorMatrix, "A function that does vector-matrix multiplication");
-    m.def("addVectorVector", &addVectorVector, "A function that adds together values at equivalent indices between two vectors");
-    m.def("subtractVectorVector", &subtractVectorVector, "A function that subtracts two values at equivalent indices between two vectors");
-    m.def("multiplyVectorVector", &multiplyVectorVector, "A function that multiplies two values at equivalent indices between two vectors");
-    m.def("scalarMatrixMultiply", &scalarMatrixMultiply, "A function that performs scalar multiplication between an integer and a matrix of integers");
-    m.def("scalarMatrixAdd", &scalarMatrixAdd, "A function that performs scalar multiplication between an integer and a matrix of integers");
-    m.def("scalarMatrixSubtract", &scalarMatrixSubtract, "A function that performs scalar multiplication between an integer and a matrix of integers");
-    m.def("scalarAddVector", &scalarAddVector, "A function that takes an integer, and performs scalar addition on a vector");
-    m.def("scalarSubtractVector", &scalarSubtractVector, "A function that takes an integer, and performs scalar subtraction on a vector");
-    m.def("scalarMultiplyVector", &scalarMultiplyVector, "A function that takes an integer, and performs scalar multiplication on a vector");
-    m.def("multiplyMatrixMatrix", &multiplyMatrixMatrix, "A function that peforms matrix multiplication on two matrices of integers");
-    m.def("addMatrixMatrix", &addMatrixMatrix, "A function that peforms matrix addition on two matrices of integers");
-    m.def("subtractMatrixMatrix", &subtractMatrixMatrix, "A function that peforms matrix subtraction on two matrices of integers");
+    m.def("multiplyVectorMatrix", &multiplyVectorMatrix<int>, "A function that does vector-matrix multiplication");
+    m.def("addVectorVector", &addVectorVector<int>, "A function that adds together values at equivalent indices between two vectors");
+    m.def("subtractVectorVector", &subtractVectorVector<int>, "A function that subtracts two values at equivalent indices between two vectors");
+    m.def("multiplyVectorVector", &multiplyVectorVector<int>, "A function that multiplies two values at equivalent indices between two vectors");
+    m.def("scalarMatrixMultiply", &scalarMatrixMultiply<int>, "A function that performs scalar multiplication between an integer and a matrix of integers");
+    m.def("scalarMatrixAdd", &scalarMatrixAdd<int>, "A function that performs scalar multiplication between an integer and a matrix of integers");
+    m.def("scalarMatrixSubtract", &scalarMatrixSubtract<int>, "A function that performs scalar multiplication between an integer and a matrix of integers");
+    m.def("scalarAddVector", &scalarAddVector<int>, "A function that takes an integer, and performs scalar addition on a vector");
+    m.def("scalarSubtractVector", &scalarSubtractVector<int>, "A function that takes an integer, and performs scalar subtraction on a vector");
+    m.def("scalarMultiplyVector", &scalarMultiplyVector<int>, "A function that takes an integer, and performs scalar multiplication on a vector");
+    m.def("multiplyMatrixMatrix", &multiplyMatrixMatrix<int>, "A function that peforms matrix multiplication on two matrices of integers");
+    m.def("addMatrixMatrix", &addMatrixMatrix<int>, "A function that peforms matrix addition on two matrices of integers");
+    m.def("subtractMatrixMatrix", &subtractMatrixMatrix<int>, "A function that peforms matrix subtraction on two matrices of integers");
+    
+    m.def("multiplyVectorMatrix", &multiplyVectorMatrix<float>, "A function that does vector-matrix multiplication");
+    m.def("addVectorVector", &addVectorVector<float>, "A function that adds together values at equivalent indices between two vectors");
+    m.def("subtractVectorVector", &subtractVectorVector<float>, "A function that subtracts two values at equivalent indices between two vectors");
+    m.def("multiplyVectorVector", &multiplyVectorVector<float>, "A function that multiplies two values at equivalent indices between two vectors");
+    m.def("scalarMatrixMultiply", &scalarMatrixMultiply<float>, "A function that performs scalar multiplication between an integer and a matrix of integers");
+    m.def("scalarMatrixAdd", &scalarMatrixAdd<float>, "A function that performs scalar multiplication between an integer and a matrix of integers");
+    m.def("scalarMatrixSubtract", &scalarMatrixSubtract<float>, "A function that performs scalar multiplication between an integer and a matrix of integers");
+    m.def("scalarAddVector", &scalarAddVector<float>, "A function that takes an integer, and performs scalar addition on a vector");
+    m.def("scalarSubtractVector", &scalarSubtractVector<float>, "A function that takes an integer, and performs scalar subtraction on a vector");
+    m.def("scalarMultiplyVector", &scalarMultiplyVector<float>, "A function that takes an integer, and performs scalar multiplication on a vector");
+    m.def("multiplyMatrixMatrix", &multiplyMatrixMatrix<float>, "A function that peforms matrix multiplication on two matrices of integers");
+    m.def("addMatrixMatrix", &addMatrixMatrix<float>, "A function that peforms matrix addition on two matrices of integers");
+    m.def("subtractMatrixMatrix", &subtractMatrixMatrix<float>, "A function that peforms matrix subtraction on two matrices of integers");
+
+    m.def("multiplyVectorMatrix", &multiplyVectorMatrix<double>, "A function that does vector-matrix multiplication");
+    m.def("addVectorVector", &addVectorVector<double>, "A function that adds together values at equivalent indices between two vectors");
+    m.def("subtractVectorVector", &subtractVectorVector<double>, "A function that subtracts two values at equivalent indices between two vectors");
+    m.def("multiplyVectorVector", &multiplyVectorVector<double>, "A function that multiplies two values at equivalent indices between two vectors");
+    m.def("scalarMatrixMultiply", &scalarMatrixMultiply<double>, "A function that performs scalar multiplication between an integer and a matrix of integers");
+    m.def("scalarMatrixAdd", &scalarMatrixAdd<double>, "A function that performs scalar multiplication between an integer and a matrix of integers");
+    m.def("scalarMatrixSubtract", &scalarMatrixSubtract<double>, "A function that performs scalar multiplication between an integer and a matrix of integers");
+    m.def("scalarAddVector", &scalarAddVector<double>, "A function that takes an integer, and performs scalar addition on a vector");
+    m.def("scalarSubtractVector", &scalarSubtractVector<double>, "A function that takes an integer, and performs scalar subtraction on a vector");
+    m.def("scalarMultiplyVector", &scalarMultiplyVector<double>, "A function that takes an integer, and performs scalar multiplication on a vector");
+    m.def("multiplyMatrixMatrix", &multiplyMatrixMatrix<double>, "A function that peforms matrix multiplication on two matrices of integers");
+    m.def("addMatrixMatrix", &addMatrixMatrix<double>, "A function that peforms matrix addition on two matrices of integers");
+    m.def("subtractMatrixMatrix", &subtractMatrixMatrix<double>, "A function that peforms matrix subtraction on two matrices of integers");
 }
