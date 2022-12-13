@@ -4,13 +4,13 @@ print("---MATRIX DEMONSTRATION---\n")
 # DEMONSTRATE CONSTRUCTOR
 print("Constructor method: 4 x 2 prefilled matrix with 3s (int)")
 a = WorseNumPy.MatrixInt(4, 2, 3)
-print(a, "\n")
+print("WorseNumPy.MatrixInt(4, 2, 3) =", a, "\n")
 
 print("Constructor method: providing a matrix (float)")
 a = WorseNumPy.MatrixFloat([[2.32, 42.89, 4], 
                             [1.34, 4.52, 25.3], 
                             [1.76, 3.43, 0.54]])
-print(a, "\n")
+print("WorseNumPy.MatrixInt([[2.32, 42.89, 4], [1.34, 4.52, 25.3], [1.76, 3.43, 0.54]]) =", a, "\n")
 
 # DEMONSTRATE SCALAR-MATRIX OPERATIONS
 # scalar add, scalar subtract, scalar multiply
