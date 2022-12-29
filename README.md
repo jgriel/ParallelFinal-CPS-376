@@ -1,4 +1,4 @@
-# ParallelFinal
+# ParallelFinal - CPS 376, Franklin and Marshall College
 
 Our own NumPy library using parallelism for the final project of CPS 376.
 
