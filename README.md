@@ -1,6 +1,6 @@
 # ParallelFinal: CPS 376 - Franklin and Marshall College
 
-Our own NumPy library using parallelism for the final project of CPS 376.
+Our own NumPy library for CPS 376 - Parallel Computing.
 
 To compile worseNumPy.cpp use the following command: 
 ```
