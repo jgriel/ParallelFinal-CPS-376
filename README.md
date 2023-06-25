@@ -1,6 +1,6 @@
-# ParallelFinal: CPS 376 - Franklin and Marshall College
+# CPS 376 - Franklin and Marshall College
 
-Our own NumPy library for CPS 376 - Parallel Computing.
+Our own parallelized NumPy library for CPS 376 - Parallel Computing using pybind 11.
 
 To compile worseNumPy.cpp use the following command: 
 ```
